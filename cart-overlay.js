@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const cartQtyText = document.querySelector('#cart-qty');   
   const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
   const totalText = document.querySelector('#total');  
-  let cartItemsContainer = document.querySelector('.cart-items'); 
+  let cartItemsContainer = document.querySelector('.cart-items');
+  
   
   
   function toggleNavCartItemsCount() {
@@ -103,18 +104,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to display cart items
   function cartDisplayCartItems() {
-    // console.log('cartDisplayCartItems')
+    console.log('cartDisplayCartItems')
+
+    // let cartItemsContainer = document.querySelector('.cart-items'); 
  
     // Display the totals   
     let cartItems = getCartItems();
-    
+    console.log('cartItems:', cartItems)
     // Clear the current content
-    cartItemsContainer.innerHTML = '';
+
     // console.log('cartItems.length:', cartItems.length)
     if (cartItems.length === 0) {
       cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
       totalText.textContent = `$ 0`;
       return;
+    } else {
+      cartItemsContainer.innerHTML = '';
     }
 			  
     itemDictionary = getItemDictionary(cartItems)
@@ -133,22 +138,15 @@ document.addEventListener('DOMContentLoaded', function() {
         itemElement.classList.add('cart-item');
         itemElement.innerHTML = `
           <div class="cart-item">
-            <div class="cart-item-block-left">
-              <img class="cart-item-img" src="${imgUrl}">
-              <div class="cart-item-text-wrapper">
-                <p class="cart-summary-item-heading">${item.cartName}</p>
-                <p class="cart-summary-item-price">$ ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-              </div>
-            </div>
-            <div class="cart-item-block-right">
-              <div class="cart-number-input-wrapper">
-                <p class="cart-number-adjuster is-minus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">-</p>
-                <p class="cart-input-number">${item.quantity}</p>
-                <p class="cart-number-adjuster is-plus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">+</p>
-              </div>
-              <div class="cart-bin-icon-wrapper" data-id=${item.id}>
-                <svg class="cart-bin-icon" width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5.73708 6.54391V18.9857C5.73708 19.7449 6.35257 20.3604 7.11182 20.3604H16.8893C17.6485 20.3604 18.264 19.7449 18.264 18.9857V6.54391M2.90906 6.54391H21.0909" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path> <path d="M8 6V4.41421C8 3.63317 8.63317 3 9.41421 3H14.5858C15.3668 3 16 3.63317 16 4.41421V6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path> </g></svg>
-              </div>
+        		<img class="cart-item-img" src="${imgUrl}">
+            <div class="cart-item-text-wrapper">
+              <p class="cart-summary-item-heading">${item.cartName}</p>
+              <p class="cart-summary-item-price">$ ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            </div>            
+            <div class="cart-number-input-wrapper">
+             	<p class="cart-number-adjuster is-minus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">-</p>
+              <p class="cart-input-number">${item.quantity}</p>
+              <p class="cart-number-adjuster is-plus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">+</p>
             </div>
           </div>
         `;
@@ -160,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cartQty = Object.keys(itemDictionary).length;
     totalText.textContent = `$ ${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     cartQtyText.textContent = `(${cartTotalQty})`
+    console.log('cartTotalQty:', cartTotalQty)
           
     // UPDATE navCartItemsCount
     if (cartItems.length === 0) {
@@ -176,9 +175,44 @@ document.addEventListener('DOMContentLoaded', function() {
     cartDeleteBtns.forEach(deleteBtn => {
       deleteBtn.addEventListener('click', removeItemFromCart);
     });
+
+    const pathname = window.location.pathname;
+    const currentPage = pathname.substring(pathname.lastIndexOf('/') + 1);
+    if (currentPage === 'checkout') {
+      checkoutRemoveCartItems();
+    }
   }
   
+
+  function checkoutRemoveCartItems() {
+
+    let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
+    const checkoutTotalTextElem = document.querySelector('#checkout-total');
+
+    checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+    checkoutTotalTextElem.textContent = `$ 0`;
+
+    // Display the totals
+    const checkoutShippingTextElem = document.querySelector('#shipping');
+    const checkoutVatTextElem = document.querySelector('#vat');
+    const checkoutGrandTotalTextElem = document.querySelector('#grand-total');
+
+    // UPDATE SUMMARY SECTION
+    checkoutTotalTextElem.textContent = `$ 0`;
+    checkoutShippingTextElem.textContent = `$ 0`;
+    checkoutVatTextElem.textContent = `$ 0`;
+    checkoutGrandTotalTextElem.textContent = `$ 0`;
+  
     
+    const orderConfirmationGoHomeButton = document.getElementById('order-confirmation-home');
+    orderConfirmationGoHomeButton.addEventListener('click', function() {
+        checkoutOverlayElem.style.display = 'none';  
+        clearCart()
+    })
+  }  
+
+
+
   // QTY CHANGER    
   function cartHandleQtyChangeClick(event) {
    	console.log('cartHandleQtyChangeClick')
@@ -222,8 +256,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // CLEAR CART
   function clearCart() {
    	localStorage.removeItem('cart');
+     updateCartCountIcon(0);
     cartDisplayCartItems();
-    updateCartCountIcon(0);
+    cartQtyText.textContent = ``
   }
   
   
