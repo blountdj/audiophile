@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleEmoneyDisplay();
 });
 
+// GENERAL CHECKOUT DISPLAY & FUNCTIONALITY
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded');
     const checkoutTotalTextElem = document.querySelector('#checkout-total');
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutCartItemsContainer.innerHTML = '';
 
         if (checkoutCartItems.length === 0) {
-            console.log("checkoutCartItems.length === 0")
+            // console.log("checkoutCartItems.length === 0")
             checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
             checkoutTotalTextElem.textContent = `$ 0`;
             return;
@@ -117,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a dictionary to aggregate items by name
         checkoutItemDictionary = checkoutGetItemDictionary(checkoutCartItems)
         let checkoutTotal = 0;     
-        console.log('checkoutTotal1:', checkoutTotal)
    
         // Iterate over itemDictionary to display each unique item
         for (let key in checkoutItemDictionary) {
@@ -143,8 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        console.log('checkoutTotal2:', checkoutTotal)
-
         // Display the totals
         
         const checkoutShippingTextElem = document.querySelector('#shipping');
@@ -165,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkoutGrandTotal = (checkoutTotal + 50)    
         const checkoutVatTotal = checkoutGrandTotal * 0.20
 
-        console.log('checkoutTotal3:', checkoutTotal)
 		// UPDATE SUMMARY SECTION
         // checkoutTotalText = document.querySelector('#total');
         checkoutTotalTextElem.textContent = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -197,26 +194,236 @@ document.addEventListener('DOMContentLoaded', function() {
             checkoutOverlayOtherItemsPlural.textContent = `${checkoutOverlayOtherItemsPluralDisplay}`;
         }
         
-        // Checkout overlay
-        const checkoutSubmitButton = document.getElementById('submit');
-        const checkoutOverlayElem = document.getElementById('checkout-overlay');
-
-        // Function to toggle display based on radio button state
-        function checkoutOverlayDisplay() {
-            checkoutOverlayElem.style.display = 'flex';    
-        }
-      
         const orderConfirmationGoHomeButton = document.getElementById('order-confirmation-home');
         orderConfirmationGoHomeButton.addEventListener('click', function() {
       	    checkoutOverlayElem.style.display = 'none';  
             clearCart()
         })
       
-
-        // Add event listener to the radio button
-        checkoutSubmitButton.addEventListener('click', checkoutOverlayDisplay);   
     }
 
     // Display cart items on page load
     checkoutDisplayCartItems();
 });
+
+
+
+// SUBMIT ORDER & FORM CHECKING
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Checkout overlay
+    const checkoutSubmitButton = document.getElementById('submit');
+    const checkoutOverlayElem = document.getElementById('checkout-overlay');
+    
+    const nameInputWrapperElem = document.getElementById('name-input-wrapper');
+
+    // const nameInputElem = document.getElementById('name-input-wrapper');
+    const emailInputWrapperElem = document.getElementById('email-input-wrapper');
+    const phoneInputWrapperElem = document.getElementById('phone-input-wrapper');
+    const addressInputWrapperElem = document.getElementById('address-input-wrapper');
+    const zipInputWrapperElem = document.getElementById('zip-input-wrapper');
+    const cityInputWrapperElem = document.getElementById('city-input-wrapper');
+    const countryInputWrapperElem = document.getElementById('country-input-wrapper');
+    const emoneyNumberInputWrapperElem = document.getElementById('e-money-number-input-wrapper');
+    const emoneyPinInputWrapperElem = document.getElementById('e-Money-pin-input-wrapper');
+
+    const emoneyRadioElem = document.getElementById('e-money-radio');
+    const cashOnDeliveryRadioElem = document.getElementById('cash-on-delivery-radio');
+    
+
+
+    function checkoutGetCartLength() {
+        // Get the current cart from localStorage
+        let checkoutCart = JSON.parse(localStorage.getItem('cart')) || [];
+        return checkoutCart.length;
+    }
+
+
+    function validateEmail(email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
+    function validatePhoneNumber(phoneNumber) {
+        // Regular expression for validating US phone numbers
+        const phoneRegex = /^(?:\+1\s?)?\(?([2-9][0-8][0-9])\)?[-.\s]?([2-9][0-9]{2})[-.\s]?([0-9]{4})$/;
+        
+        return phoneRegex.test(phoneNumber);
+    }
+
+
+    function isNumericAndLength(value, length) {
+        // Regular expression to check if the value contains only digits
+        const onlyNumbers = /^[0-9]+$/;
+    
+        // Check if the value matches the regular expression and has the specified length
+        if (onlyNumbers.test(value) && value.length === length) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Function to toggle display based on radio button state
+    function checkoutOverlayDisplay() {
+        checkoutOverlayElem.style.display = 'flex';    
+    }
+
+
+    function updateInputActions(inputElem, labelElem, errorElem, errorMsg, error) {
+        if (error) {
+            inputElem.style.border = '1px solid #cd2c2c';
+            labelElem.style.color = '#cd2c2c'; 
+            errorElem.style.display = 'block';
+            errorElem.textContent = errorMsg;
+
+        } else {
+            inputElem.style.border = '1px solid #cfcfcf';
+            labelElem.style.color = 'black';
+            errorElem.style.display = 'none';
+        }  
+
+    }
+
+
+    function checkInput(inputWrapperElem, type) {
+        let errors = false;
+        console.log('checkInput')
+
+        const errorMsgs = {
+            'text': 'Min. 3 characters',
+            'email': 'Invalid email',
+            'phone': 'Invalid phone number',
+            'emoneyNumber': 'Must be 9 digits',
+            'emoneyPin': 'Must be 4 digits',
+        }
+        
+
+        const inputElem = inputWrapperElem.querySelector('input');
+        const labelElem = inputWrapperElem.querySelector('label');
+        const errorElem = inputWrapperElem.querySelector('.checkout-error-text');
+        const value = inputElem.value;
+
+        if (type === 'text') {
+            if (value.length < 4) {
+                updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
+                errors = true;
+            } else {
+                updateInputActions(inputElem, labelElem, errorElem, '', false)
+            }       
+        } else if (type === 'email') {
+            if (!validateEmail(value)) {
+                console.log("The email is invalid.");
+                updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
+                errors = true;
+            } else {
+                console.log("The email is valid.");
+                updateInputActions(inputElem, labelElem, errorElem, '', false)
+            }
+        } else if (type === 'phone') {
+            if (!validatePhoneNumber(value)) {
+                console.log("The phone is invalid.");
+                updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
+                errors = true;
+            } else {
+                console.log("The phone is valid.");
+                updateInputActions(inputElem, labelElem, errorElem, '', false)
+            }
+        } else if (type === 'emoneyNumber') {
+            if (!isNumericAndLength(value, 9)) {
+                console.log("The emoneyNumber is invalid.");
+                updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
+                errors = true;
+            } else {
+                console.log("The emoneyNumber is valid.");
+                updateInputActions(inputElem, labelElem, errorElem, '', false)
+            }
+        } else if (type === 'emoneyPin') {
+            if (!isNumericAndLength(value, 4)) {
+                console.log("The emoneyPin is invalid.");
+                updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
+                errors = true;
+            } else {
+                console.log("The emoneyPin is valid.");
+                updateInputActions(inputElem, labelElem, errorElem, '', false)
+            }
+        }
+
+        return errors;
+    }
+
+    function checkRadioInputs() {
+        let radioChecked = false;
+
+        // Get radio button elements
+        const emoneyRadioWrapperElem = document.getElementById('e-money-radio');
+        const cashOnDeliveryRadioWrapperElem = document.getElementById('cash-on-delivery-radio');
+        const emoneyRadioInput = emoneyRadioWrapperElem.querySelector('input');
+        const cashOnDeliveryRadioInput = cashOnDeliveryRadioWrapperElem.querySelector('input');
+        const labelElem = document.getElementById('payment-method-label');
+        const paymentMethodErrorTextElem = document.getElementById('payment-method-error-text');
+        
+        const emoneyNumberInputWrapperElem = document.getElementById('e-money-number-input-wrapper');
+        const emoneyPinInputWrapperElem = document.getElementById('e-money-pin-input-wrapper');
+        
+
+        // emoneyRadioInput if each radio button is checked
+        if (emoneyRadioInput.checked) {
+            console.log('emoney is checked');
+            radioChecked = true;
+            updateInputActions(emoneyRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
+            updateInputActions(cashOnDeliveryRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
+            checkInput(emoneyNumberInputWrapperElem, 'emoneyNumber')
+            checkInput(emoneyPinInputWrapperElem, 'emoneyPin')
+
+        } else if (cashOnDeliveryRadioInput.checked) {
+            console.log('cash on delivery is checked');
+            radioChecked = true;
+            updateInputActions(emoneyRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
+            updateInputActions(cashOnDeliveryRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
+        } else {
+            console.log('No option is checked');
+            updateInputActions(emoneyRadioWrapperElem, labelElem, paymentMethodErrorTextElem, 'Please select a payment method', true)
+            updateInputActions(cashOnDeliveryRadioWrapperElem, labelElem, paymentMethodErrorTextElem, 'Please select a payment method', true)
+        }
+
+        return radioChecked;
+    }
+
+    
+    function checkoutBtnClick() {
+        let _continue = true;
+        let errors = [];
+
+        const noItemsInCart = checkoutGetCartLength();
+        if (noItemsInCart === 0) {
+            alert('Cart is empty');
+            return;
+        }
+        
+        errors.push(checkInput(nameInputWrapperElem, 'text'))
+        errors.push(checkInput(emailInputWrapperElem, 'email'))
+        errors.push(checkInput(phoneInputWrapperElem, 'phone'))
+        errors.push(checkInput(addressInputWrapperElem, 'text'))
+        errors.push(checkInput(zipInputWrapperElem, 'text'))
+        errors.push(checkInput(cityInputWrapperElem, 'text'))
+        errors.push(checkInput(countryInputWrapperElem, 'text'))
+
+        errors.push(checkRadioInputs())
+
+
+
+        console.log(errors)
+        if (errors.includes(true)) {
+            alert("Some data is invalid, please check highlighted fields")
+        } else {
+            checkoutOverlayDisplay()
+            localStorage.removeItem('cart');
+            const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
+      	    navCartItemsCountElem.textContent = '0';
+        }
+    }
+
+    // Add event listener to the radio button
+    checkoutSubmitButton.addEventListener('click', checkoutBtnClick);   
+})
