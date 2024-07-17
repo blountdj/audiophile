@@ -2,7 +2,7 @@
 // E-MONEY TOGGLE
 document.addEventListener('DOMContentLoaded', function() {
     // Get the radio button element
-    const eMoneyRadioButton = document.getElementById('e-money');
+    const eMoneyRadioButton = document.getElementById('e-money-radio');
     const cashOnDeliveryRadioButton = document.getElementById('cash-on-delivery-radio');
     
     // Function to toggle display based on radio button state
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // GENERAL CHECKOUT DISPLAY & FUNCTIONALITY
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded');
-    const checkoutTotalTextElem = document.querySelector('#checkout-total');
+    const checkoutTotalTextElem = document.querySelector('#Total');
     
     const checkoutProductImages = {
 		"XX59 headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7babf36e28a4099e1_image-xx59-headphones.webp",
@@ -101,8 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to display cart items
     function checkoutDisplayCartItems() {
+
         let checkoutCartItems = checkoutGetCartItems();
-        //console.log('checkoutCartItems:', checkoutCartItems);
+        // console.log('checkoutCartItems:', checkoutCartItems);
         let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
 
         // Clear the current content
@@ -120,11 +121,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let checkoutTotal = 0;     
    
         // Iterate over itemDictionary to display each unique item
+        let hiddenProductText = '';
+        let index = 0;
         for (let key in checkoutItemDictionary) {
+            index++;
             if (checkoutItemDictionary.hasOwnProperty(key)) {
                 let checkoutItem = checkoutItemDictionary[key];
                 checkoutTotal += checkoutItem.subtotal;
                 let checkoutImgUrl = checkoutProductImages[checkoutItem.name]
+                hiddenProductText += `${index}) ${checkoutItem.quantity}x ${checkoutItem.name} = $${checkoutItem.price * checkoutItem.quantity} - `;
                 //console.log('imgUrl:', imgUrl);
                 //console.log('subtotal:', item.subtotal);
                 let checkoutItemElement = document.createElement('div');
@@ -143,11 +148,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // UPDATE HIDDEN PRODUCT INPUT
+        const productInput = document.getElementById('Products');
+        productInput.readOnly = true;
+        productInput.value = hiddenProductText.slice(0, -2);
+
         // Display the totals
-        
-        const checkoutShippingTextElem = document.querySelector('#shipping');
-        const checkoutVatTextElem = document.querySelector('#vat');
-        const checkoutGrandTotalTextElem = document.querySelector('#grand-total');
+        const checkoutShippingTextElem = document.querySelector('#Shipping');
+        const checkoutVatTextElem = document.querySelector('#VAT');
+        const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
         
         // OVERLAY ELEMENTS
         const checkoutOverlayGrandTotalText = document.querySelector('#overlay-grand-total');
@@ -164,11 +173,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkoutVatTotal = checkoutGrandTotal * 0.20
 
 		// UPDATE SUMMARY SECTION
-        // checkoutTotalText = document.querySelector('#total');
-        checkoutTotalTextElem.textContent = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        checkoutShippingTextElem.textContent = `$ 50.00`;
-        checkoutVatTextElem.textContent = `$ ${checkoutVatTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        checkoutGrandTotalTextElem.textContent = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        checkoutTotalTextElem.value = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        checkoutShippingTextElem.value = `$ 50.00`;
+        checkoutVatTextElem.value = `$ ${checkoutVatTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        checkoutGrandTotalTextElem.value = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         
         // UPDATE OVERLAY
         const checkoutFirstKey = Object.keys(checkoutItemDictionary)[0];
@@ -181,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutOverlayGrandTotalText.textContent = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         
         const checkoutDictionaryLength = Object.keys(checkoutItemDictionary).length;
-        console.log('checkoutDictionaryLength:', checkoutDictionaryLength)
+        // console.log('checkoutDictionaryLength:', checkoutDictionaryLength)
         
         let checkoutOverlayImgUrl = checkoutProductImages[checkoutfirstValue.name]
         checkoutOverlayOtherItemImage.src = checkoutOverlayImgUrl;
@@ -198,8 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         orderConfirmationGoHomeButton.addEventListener('click', function() {
       	    // checkoutOverlayElem.style.display = 'none';  
             clearCart()
-        })
-      
+        }) 
     }
 
     // Display cart items on page load
@@ -211,42 +218,25 @@ document.addEventListener('DOMContentLoaded', function() {
 // SUBMIT ORDER & FORM CHECKING
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Checkout overlay
-    const checkoutSubmitButton = document.getElementById('submit');
-    // const checkoutOverlayElem = document.getElementById('checkout-overlay');
-    
     const nameInputWrapperElem = document.getElementById('name-input-wrapper');
-
-    // const nameInputElem = document.getElementById('name-input-wrapper');
     const emailInputWrapperElem = document.getElementById('email-input-wrapper');
     const phoneInputWrapperElem = document.getElementById('phone-input-wrapper');
     const addressInputWrapperElem = document.getElementById('address-input-wrapper');
     const zipInputWrapperElem = document.getElementById('zip-input-wrapper');
     const cityInputWrapperElem = document.getElementById('city-input-wrapper');
-    const countryInputWrapperElem = document.getElementById('country-input-wrapper');
-    const emoneyNumberInputWrapperElem = document.getElementById('e-money-number-input-wrapper');
-    const emoneyPinInputWrapperElem = document.getElementById('e-Money-pin-input-wrapper');
-
-    const emoneyRadioElem = document.getElementById('e-money-radio');
-    const cashOnDeliveryRadioElem = document.getElementById('cash-on-delivery-radio');
-    
+    const countryInputWrapperElem = document.getElementById('country-input-wrapper');   
     const successConfirmationNameElem = document.getElementById('confirmation-text-name');
-
-    const productInput = document.getElementById('productsInput');
-    
-
+       
     function checkoutGetCartLength() {
         // Get the current cart from localStorage
         let checkoutCart = JSON.parse(localStorage.getItem('cart')) || [];
         return checkoutCart.length;
     }
 
-
     function validateEmail(email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
     }
-
 
     function isNumericAndLength(value, minLength) {
         // Regular expression to check if the value contains only digits
@@ -259,12 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     }
-
-    // Function to toggle display based on radio button state
-    // function checkoutOverlayDisplay() {
-    //     checkoutOverlayElem.style.display = 'flex';    
-    // }
-
 
     function updateInputActions(inputElem, labelElem, errorElem, errorMsg, error) {
         if (error) {
@@ -280,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }  
 
     }
-
 
     function checkInput(inputWrapperElem, type) {
         let errors = false;
@@ -385,48 +368,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return radioError;
     }
 
- 
-    // disabledInput.readonly = true;  
-    // disabledInput.blur()
-    
-    // function checkoutBtnClick() {
-    //     let errors = [];
-    //     const noItemsInCart = checkoutGetCartLength();
-    //     if (noItemsInCart === 0) {
-    //         alert('Cart is empty');
-    //         return;
-    //     }
-        
-    //     errors.push(checkInput(nameInputWrapperElem, 'text'))
-    //     errors.push(checkInput(emailInputWrapperElem, 'email'))
-    //     errors.push(checkInput(phoneInputWrapperElem, 'phone'))
-    //     errors.push(checkInput(addressInputWrapperElem, 'text'))
-    //     errors.push(checkInput(zipInputWrapperElem, 'text'))
-    //     errors.push(checkInput(cityInputWrapperElem, 'text'))
-    //     errors.push(checkInput(countryInputWrapperElem, 'text'))
-
-    //     errors.push(checkRadioInputs())
-
-    //     console.log('errors:', errors)
-
-    //     // console.log(errors)
-    //     if (errors.includes(true)) {
-    //         alert("Some data is invalid, please check highlighted fields")
-    //     } else {
-    //         successConfirmationNameElem.innerHTML = nameInputWrapperElem.querySelector('input').value;
-    //         // checkoutOverlayDisplay()
-    //         localStorage.removeItem('cart');
-    //         const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
-    //   	    navCartItemsCountElem.textContent = '0';
-
-    //     }
-    // }
-
-    // Add event listener to the radio button
-    // checkoutSubmitButton.addEventListener('click', checkoutBtnClick);   
-
     $('[wr-type="submit"]').click(function() { 
-        console.log('submit clicked 5501')
+        // console.log('submit clicked 5501')
         let errors = [];
         const noItemsInCart = checkoutGetCartLength();
         if (noItemsInCart === 0) {
@@ -441,26 +384,20 @@ document.addEventListener('DOMContentLoaded', function() {
         errors.push(checkInput(zipInputWrapperElem, 'text'))
         errors.push(checkInput(cityInputWrapperElem, 'text'))
         errors.push(checkInput(countryInputWrapperElem, 'text'))
-
         errors.push(checkRadioInputs())
 
-        console.log('errors:', errors)
+        // console.log('errors:', errors)
 
-
-        // let isOk = runFormSubmitChecks(); // Use this to define whether isOk is true or false
         if (errors.includes(true)) {
             alert("Some data is invalid, please check highlighted fields")
         } else {
             successConfirmationNameElem.innerHTML = nameInputWrapperElem.querySelector('input').value;
-            // checkoutOverlayDisplay()
+
             localStorage.removeItem('cart');
             const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
       	    navCartItemsCountElem.textContent = '0';
-              console.log('submitting')
-            //   $(this).parents('form').submit()
-
-            // TODO SUBMIT DATA TO AIRTABLE
-
+            //   console.log('submitting')
+              $(this).parents('form').submit()
         }
-      }); // end submit
+      }); 
 })
