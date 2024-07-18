@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM LOADED (VSCODE)')
+  console.log('cart-overlay.js - DOM LOADED (VSCODE)')
     
   // IMAGES
   const productImages = {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const totalText = document.querySelector('#total');  
   let cartItemsContainer = document.querySelector('.cart-items');
   
-  
+  console.log('tester')
   
   function toggleNavCartItemsCount() {
     navCartQtyCountElem.style.display = navCartQtyCountElem.textContent === '0' ? 'none' : 'flex';
@@ -187,15 +187,15 @@ document.addEventListener('DOMContentLoaded', function() {
   function checkoutRemoveCartItems() {
 
     let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
-    const checkoutTotalTextElem = document.querySelector('#checkout-total');
+    const checkoutTotalTextElem = document.querySelector('#Total');
 
     checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
     checkoutTotalTextElem.textContent = `$ 0`;
 
     // Display the totals
-    const checkoutShippingTextElem = document.querySelector('#shipping');
-    const checkoutVatTextElem = document.querySelector('#vat');
-    const checkoutGrandTotalTextElem = document.querySelector('#grand-total');
+    const checkoutShippingTextElem = document.querySelector('#Shipping');
+    const checkoutVatTextElem = document.querySelector('#VAT');
+    const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
 
     // UPDATE SUMMARY SECTION
     checkoutTotalTextElem.textContent = `$ 0`;

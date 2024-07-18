@@ -47,11 +47,21 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleNavCartItemsCount()
     }
 
+    function animateCart() {
+        const cartIcon = document.getElementById('nav-cart-icon');
+        cartIcon.classList.add('jiggle');
+
+        // Remove the class after the animation ends to allow for re-triggering
+        cartIcon.addEventListener('animationend', function() {
+            cartIcon.classList.remove('jiggle');
+        }, { once: true });
+    }
+
     // Attach event listeners to all 'add to cart' buttons
     const addToCartBtn = document.querySelector('#add-to-cart');
     addToCartBtn.addEventListener('click', function() {
         // Get product details from data attributes
-        console.log('add to cart')
+        console.log('add to cart - with Jiggle')
         let item = {
             id: this.getAttribute('data-id'),
             name: document.querySelector('#product-name').getAttribute('data-name'),
@@ -62,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         addItemToCart(item);
         alert('Item added to cart');
+        animateCart()
         addCartItemsCount()            
     });
 });

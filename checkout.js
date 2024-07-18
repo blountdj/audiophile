@@ -4,15 +4,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get the radio button element
     const eMoneyRadioButton = document.getElementById('e-money-radio');
     const cashOnDeliveryRadioButton = document.getElementById('cash-on-delivery-radio');
+    const eMoneyInput = document.getElementById('emoney');
+
     
     // Function to toggle display based on radio button state
     function toggleEmoneyDisplay() {
+        console.log('toggleEmoneyDisplay')
+
+        console.log('eMoneyRadioButton:', eMoneyRadioButton)
+
         // Get all elements with the class 'form-input-wrapper is-emoney'
         const emoneyElements = document.querySelectorAll('.form-input-wrapper.is-emoney');
         const cashOnDeliveryElement = document.getElementById('cash-on-delivery');
         
         // Determine the display style based on the radio button's checked state
-        const eMoneyDisplayStyle = eMoneyRadioButton.checked ? 'block' : 'none';
+        const eMoneyDisplayStyle = eMoneyInput.checked ? 'block' : 'none';
         const cashOnDeliveryDisplayStyle = cashOnDeliveryRadioButton.checked ? 'flex' : 'none';
         
         // Set the display style for each element
@@ -99,6 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
     	return checkoutItemDictionary;
     }
 
+    function resizeInput() {
+        this.style.width = this.value.length + "ch";
+      }
+
     // Function to display cart items
     function checkoutDisplayCartItems() {
 
@@ -154,9 +164,14 @@ document.addEventListener('DOMContentLoaded', function() {
         productInput.value = hiddenProductText.slice(0, -2);
 
         // Display the totals
+        const checkoutTotalTextElemHidden = document.querySelector('#Total-Hidden');
         const checkoutShippingTextElem = document.querySelector('#Shipping');
+        const checkoutShippingTextElemHidden = document.querySelector('#Shipping-Hidden');
         const checkoutVatTextElem = document.querySelector('#VAT');
+        const checkoutVatTextElemHidden = document.querySelector('#VAT-Hidden');
         const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
+        const checkoutGrandTotalTextElemHidden = document.querySelector('#Grand-Total-Hidden');
+        // checkoutGrandTotalTextElem.readOnly = true;
         
         // OVERLAY ELEMENTS
         const checkoutOverlayGrandTotalText = document.querySelector('#overlay-grand-total');
@@ -172,12 +187,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkoutGrandTotal = (checkoutTotal + 50)    
         const checkoutVatTotal = checkoutGrandTotal * 0.20
 
+        console.log('checkoutGrandTotal:', checkoutGrandTotal)
+
 		// UPDATE SUMMARY SECTION
         checkoutTotalTextElem.value = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        checkoutTotalTextElemHidden.value = checkoutTotal;
+
         checkoutShippingTextElem.value = `$ 50.00`;
+        checkoutShippingTextElemHidden.value = 50.00;
+
         checkoutVatTextElem.value = `$ ${checkoutVatTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        checkoutVatTextElemHidden.value = checkoutVatTotal;
+
         checkoutGrandTotalTextElem.value = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        
+        checkoutGrandTotalTextElemHidden.value = checkoutGrandTotal;
+        // checkoutGrandTotalTextElem.value = checkoutGrandTotal;
+        resizeInput.call(checkoutGrandTotalTextElem);
+
         // UPDATE OVERLAY
         const checkoutFirstKey = Object.keys(checkoutItemDictionary)[0];
         const checkoutfirstValue = checkoutItemDictionary[checkoutFirstKey];
@@ -368,8 +394,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return radioError;
     }
 
-    $('[wr-type="submit"]').click(function() { 
-        // console.log('submit clicked 5501')
+    $('[wr-type="submit"]').click(function(event) { 
+        // console.log('submit3 clicked')
+
+        // event.preventDefault();
+
         let errors = [];
         const noItemsInCart = checkoutGetCartLength();
         if (noItemsInCart === 0) {
@@ -396,8 +425,10 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('cart');
             const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
       	    navCartItemsCountElem.textContent = '0';
-            //   console.log('submitting')
-              $(this).parents('form').submit()
+
+              console.log('submitting')
+              $(this).parents('form').submit() 
+            
         }
       }); 
 })
