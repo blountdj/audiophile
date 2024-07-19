@@ -20,16 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
   const totalText = document.querySelector('#total');  
   let cartItemsContainer = document.querySelector('.cart-items');
-  
-  console.log('tester')
-  
-  function toggleNavCartItemsCount() {
-    navCartQtyCountElem.style.display = navCartQtyCountElem.textContent === '0' ? 'none' : 'flex';
+  const goToCheckoutBtn = document.querySelector('#go-to-checkout-btn') 
+
+  function goToCheckoutBtnClick() {
+    const displayStyle = overlay.style.display === 'none' ? 'flex' : 'none';
+    overlay.style.display = displayStyle;
   }
 
-  // FUNCTIONS
   function toggleOverlayDisplay(event) {
-    console.log('toggleOverlayDisplay')
+    // console.log('toggleOverlayDisplay')
     const buttonWrapper = event.target.closest('[data-toggle="close-cart-overlay"]');
     if (buttonWrapper) {
       const displayStyle = overlay.style.display === 'none' ? 'flex' : 'none';
@@ -39,95 +38,28 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   }
+  
+   
+  function cartDisplayCartItems(cartItems = null) {
 
-     
-  function updateCartItemQty(qty) {
-    // console.log('qty:', qty)
-    navCartQtyCountElem.textContent = `${qty}`;
-    toggleNavCartItemsCount()
-  }
-    
-  function updateCartCountIcon(qty) {
-   	
-    if (qty === 0) {
-      navCartQtyCountElem.textContent = '0';
-    } else {
-     	console.log('TO UPDATE QTY:', qty)
+    if (!cartItems) {
+      cartItems = getCartItems();
     }
-      toggleNavCartItemsCount()
-  }
-    
-  // Function to get all items in the cart
-  function getCartItems() {
-    // Get the current cart from localStorage
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    return cart;
-  }
 
-
-  function getItemDictionary(cartItems) {
-    // console.log('cartItems:', cartItems)
-      
-    // Create a dictionary to aggregate items by name
-    let itemDictionary = {};
-          
-    // Iterate over cart items to aggregate quantities and calculate subtotals
-    cartItems.forEach(item => {
-      const price = parseFloat(item.price);            
-      let qty = item.quantity !== undefined ? item.quantity : 1
-      if (!itemDictionary[item.name]) {
-        itemDictionary[item.name] = {
-          id: item.id,
-          name: item.name,
-          cartName: item.cartName,
-          price: price,
-          quantity: qty,
-          subtotal: 0
-        };
-      } else {
-        itemDictionary[item.name].quantity = itemDictionary[item.name].quantity + qty;
-      }
-          
-      itemDictionary[item.name].subtotal += price;
-    });
-          
-    return itemDictionary;
-  }
-
-  function getCartItemsQty(cartItems) {
+    let total = 0;
     let cartTotalQty = 0;
-    cartItems.forEach(item => {
-      cartTotalQty += item.quantity
-    })
-    return cartTotalQty;
-  }
-
-  // Function to display cart items
-  function cartDisplayCartItems() {
-    console.log('cartDisplayCartItems')
-
-    // let cartItemsContainer = document.querySelector('.cart-items'); 
- 
-    // Display the totals   
-    let cartItems = getCartItems();
-    console.log('cartItems:', cartItems)
-    // Clear the current content
 
     // console.log('cartItems.length:', cartItems.length)
     if (cartItems.length === 0) {
       cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
       totalText.textContent = `$ 0`;
+      disableCheckoutBtn();
       return;
     } else {
       cartItemsContainer.innerHTML = '';
     }
 			  
     itemDictionary = getItemDictionary(cartItems)
-    // console.log('itemDictionary:', itemDictionary)
-    let total = 0;
-    let cartTotalQty = 0;
-        
-    // Iterate over itemDictionary to display each unique item
     for (let key in itemDictionary) {
       if (itemDictionary.hasOwnProperty(key)) {
         let item = itemDictionary[key];
@@ -138,15 +70,24 @@ document.addEventListener('DOMContentLoaded', function() {
         itemElement.classList.add('cart-item');
         itemElement.innerHTML = `
           <div class="cart-item">
-        		<img class="cart-item-img" src="${imgUrl}">
-            <div class="cart-item-text-wrapper">
-              <p class="cart-summary-item-heading">${item.cartName}</p>
-              <p class="cart-summary-item-price">$ ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            <div class="cart-item-block-left">
+        		  <img class="cart-item-img" src="${imgUrl}">
+              <div class="cart-item-text-wrapper">
+                <p class="cart-summary-item-heading">${item.cartName}</p>
+                <p class="cart-summary-item-price">$ ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              </div>            
             </div>            
-            <div class="cart-number-input-wrapper">
-             	<p class="cart-number-adjuster is-minus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">-</p>
-              <p class="cart-input-number">${item.quantity}</p>
-              <p class="cart-number-adjuster is-plus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">+</p>
+            <div class="cart-item-block-left">
+              <div class="cart-number-input-wrapper">
+                <p class="cart-number-adjuster is-minus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">-</p>
+                <p class="cart-input-number">${item.quantity}</p>
+                <p class="cart-number-adjuster is-plus" data-id=${item.id} data-name="${item.name}" data-price=${item.price} data-cartname="${item.cartName}">+</p>
+              </div>
+              <div class="cart-bin-icon-wrapper" data-id=${item.id}>
+                <div class="cart-bin-icon">
+                  <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5.73708 6.54391V18.9857C5.73708 19.7449 6.35257 20.3604 7.11182 20.3604H16.8893C17.6485 20.3604 18.264 19.7449 18.264 18.9857V6.54391M2.90906 6.54391H21.0909" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path> <path d="M8 6V4.41421C8 3.63317 8.63317 3 9.41421 3H14.5858C15.3668 3 16 3.63317 16 4.41421V6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path> </g></svg>
+                </div>
+              </div>
             </div>
           </div>
         `;
@@ -155,20 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // UPDATE SUMMARY SECTION
-    const cartQty = Object.keys(itemDictionary).length;
+    // const cartQty = Object.keys(itemDictionary).length;
     totalText.textContent = `$ ${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     cartQtyText.textContent = `(${cartTotalQty})`
-    console.log('cartTotalQty:', cartTotalQty)
-          
-    // UPDATE navCartItemsCount
-    if (cartItems.length === 0) {
-      navCartQtyCountElem.style.display = 'none';
-    } else {
-      navCartQtyCountElem.style.display = 'absolute';
-      navCartQtyCountElem.textContent = `${cartTotalQty}`;
-    }
-
-    updateCartItemQty(cartTotalQty);
+   
     cartSetQtyAdjustmentBtns()
 
     const cartDeleteBtns = document.querySelectorAll('.cart-bin-icon-wrapper');
@@ -183,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-
   function checkoutRemoveCartItems() {
 
     let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
@@ -203,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
     checkoutVatTextElem.textContent = `$ 0`;
     checkoutGrandTotalTextElem.textContent = `$ 0`;
   
-    
     const orderConfirmationGoHomeButton = document.getElementById('order-confirmation-home');
     orderConfirmationGoHomeButton.addEventListener('click', function() {
         checkoutOverlayElem.style.display = 'none';  
@@ -211,32 +140,58 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   }  
 
-
-
   // QTY CHANGER    
   function cartHandleQtyChangeClick(event) {
-   	console.log('cartHandleQtyChangeClick')
+   	// console.log('cartHandleQtyChangeClick')
     let cartItems = getCartItems();
+    let cartItemsQty = getCartItemsQty(cartItems)
  		itemDictionary = getItemDictionary(cartItems)
     
 		const button = event.target;
     const name = button.dataset.name;    
     
     if (event.target.classList.contains('is-plus')) {
-      console.log('increase')
       itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) + 1
+      localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
+      cartDisplayCartItems(cartItems)
+  
+      cartItemsQtyUpdated = cartItemsQty + 1;
+
+      if (cartItemsQtyUpdated === 1) {
+        enableCheckoutBtn();
+        showCartCountIcon()
+        addCartItemsCount() 
+      } else {
+        applyAnimationClass(navCartQtyCountElem, 'pop-part-1')
+        setTimeout(() => {
+          addCartItemsCount()  
+        }, 250);
+      }
     }
         
     if (event.target.classList.contains('is-minus')) {
-      if (itemDictionary[name].quantity === 0) {
-       	// Do nothing
-      } else {
-      	itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) - 1       
+
+      if (itemDictionary[name].quantity !== 0) {
+      	itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) - 1   
+        localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
+        cartDisplayCartItems(cartItems)
+    
+        cartItemsQtyUpdated = cartItemsQty - 1;
+
+        if (cartItemsQtyUpdated === 0) {
+          disableCheckoutBtn();
+          applyAnimationClass(navCartQtyCountElem, 'pop-to-nothing')
+          setTimeout(() => {
+            updateCartCountIcon(0);
+        }, 400);
+        } else {
+          applyAnimationClass(navCartQtyCountElem, 'pop-part-1')
+          setTimeout(() => {
+            minusCartItemsCount()  
+          }, 250);
+        }  
       }
     }
-    	
-    localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
-    cartDisplayCartItems()
   }
 
   function cartSetQtyAdjustmentBtns() {
@@ -253,38 +208,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // CLEAR CART
   function clearCart() {
    	localStorage.removeItem('cart');
-     updateCartCountIcon(0);
+    applyAnimationClass(navCartQtyCountElem, 'pop-to-nothing')
+    setTimeout(() => {
+      updateCartCountIcon(0);
+  }, 400);
     cartDisplayCartItems();
-    cartQtyText.textContent = ``
+    cartQtyText.textContent = ``;
+    disableCheckoutBtn()
   }
   
-  
-  // CART DELETE BUTTON
+
+  // CART DELETE BUTTONS
   function removeItemFromCart(event) {
-    console.log('removeItemFromCart'); // This logs when the function is called
     const button = event.target.closest('.cart-bin-icon-wrapper');
     const itemId = button.dataset.id; // Access the data-id attribute
-    console.log('event:', event);
-    console.log('button', button);
-    console.log('Item ID to remove:', itemId);
 
     // Your logic to remove the item from the cart using itemId
     let cartItems = getCartItems(); // Assuming you have a function to get the cart items
-
-    console.log('cartItems:')
-    console.log(cartItems)
-
-    // Filter out the item with the matching itemId
     cartItems = cartItems.filter(item => item.id !== itemId);
-
-    // Update the cart in localStorage
     localStorage.setItem('cart', JSON.stringify(cartItems));
-
-    // Optionally, refresh the cart display
-    cartDisplayCartItems(); // Assuming you have a function to display cart items
+    cartDisplayCartItems(cartItems); 
 
     // Update the cart count icon
     const cartTotalQty = getCartItemsQty(cartItems)
@@ -292,15 +237,16 @@ document.addEventListener('DOMContentLoaded', function() {
     cartQtyText.textContent = `(${cartTotalQty})`
   }
 
+  function init() {
+    cartIcon.addEventListener('click', toggleOverlayDisplay);
+    removeAllLink.addEventListener('click', clearCart); 
+    overlayCloseBtn.addEventListener('click', toggleOverlayDisplay); 
+    goToCheckoutBtn.addEventListener('click', goToCheckoutBtnClick);
 
-  // // EVENT LISTENERS
-  cartIcon.addEventListener('click', toggleOverlayDisplay);
-  removeAllLink.addEventListener('click', clearCart); 
-  overlayCloseBtn.addEventListener('click', toggleOverlayDisplay); 
+    cartDisplayCartItems();
+    overlay.style.display = 'none'
+  }
 
-  // INIT
-  cartDisplayCartItems();
-  overlay.style.display = 'none'
+  init()
   
 });
-

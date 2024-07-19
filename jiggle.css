@@ -1,0 +1,43 @@
+@keyframes jiggle {
+    0% {
+        transform: none;
+    }
+    25% {
+        transform: rotateZ(20deg);
+    }
+    75% {
+        transform: rotateZ(-20deg);
+    }
+    100% {
+        transform: none;
+    }
+}
+
+@keyframes pop-part-1 {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.1); }
+}
+
+
+@keyframes pop-to-nothing {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0); }
+}
+
+/* Class to apply jiggle animation */
+.jiggle {
+    animation: jiggle 0.5s linear 4;
+}
+
+.pop-part-1 {
+    animation: pop-part-1 0.5s ease-in-out;
+}
+
+
+.pop-to-nothing {
+    animation: pop-to-nothing 0.5s ease-in-out;
+}
+
+#nav-cart-items-count {
+    transition: all 0.5s ease-in-out;
+}

@@ -50,28 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "ZX7 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a778d4e0d0ff09b076_image-zx7-speaker.webp",
         "ZX9 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a82554a6dd42ae0c7b_image-zx9-speaker.webp"
     };
-
-    // Function to get all items in the cart
-    function checkoutGetCartItems() {
-        // Get the current cart from localStorage
-        let checkoutCart = JSON.parse(localStorage.getItem('cart')) || [];
-        return checkoutCart;
-    }
     
-    function updateCartCountIcon(qty) {
-        const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
-        if (qty === 0) {
-      	navCartItemsCountElem.textContent = '0';
-        } else {
-      	    console.log('TO UPDATE QTY:', qty)
-        }
-        toggleNavCartItemsCount()
-    }
-
-    function toggleNavCartItemsCount() {
-        const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
-        navCartQtyCountElem.style.display = navCartQtyCountElem.textContent === '0' ? 'none' : 'flex';
-    }
     
     function clearCart() {
     	localStorage.removeItem('cart');
@@ -79,40 +58,49 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCartCountIcon(0);
     }
         
-    function checkoutGetItemDictionary(checkoutCartItems) {
-        // Create a dictionary to aggregate items by name
-        let checkoutItemDictionary = {};
+    // function checkoutGetItemDictionary(checkoutCartItems) {
+    //     // Create a dictionary to aggregate items by name
+    //     let checkoutItemDictionary = {};
             
-        // Iterate over cart items to aggregate quantities and calculate subtotals
-        checkoutCartItems.forEach(checkoutItem => {
-            const checkoutPrice = parseFloat(checkoutItem.price);            
-            let checkoutQty = checkoutItem.quantity !== undefined ? checkoutItem.quantity : 1
-            if (!checkoutItemDictionary[checkoutItem.name]) {
-                checkoutItemDictionary[checkoutItem.name] = {
-                    id: checkoutItem.id,
-                    name: checkoutItem.name,
-                    cartName: checkoutItem.cartName,
-                    price: checkoutPrice,
-                    quantity: checkoutQty,
-                    subtotal: 0
-                };
-            } else {
-                checkoutItemDictionary[checkoutItem.name].quantity = checkoutItemDictionary[checkoutItem.name].quantity + checkoutQty;
-            }
-            checkoutItemDictionary[checkoutItem.name].subtotal += (checkoutPrice * checkoutQty);
-        });
+    //     // Iterate over cart items to aggregate quantities and calculate subtotals
+    //     checkoutCartItems.forEach(checkoutItem => {
+    //         const checkoutPrice = parseFloat(checkoutItem.price);            
+    //         let checkoutQty = checkoutItem.quantity !== undefined ? checkoutItem.quantity : 1
+    //         if (!checkoutItemDictionary[checkoutItem.name]) {
+    //             checkoutItemDictionary[checkoutItem.name] = {
+    //                 id: checkoutItem.id,
+    //                 name: checkoutItem.name,
+    //                 cartName: checkoutItem.cartName,
+    //                 price: checkoutPrice,
+    //                 quantity: checkoutQty,
+    //                 subtotal: 0
+    //             };
+    //         } else {
+    //             checkoutItemDictionary[checkoutItem.name].quantity = checkoutItemDictionary[checkoutItem.name].quantity + checkoutQty;
+    //         }
+    //         checkoutItemDictionary[checkoutItem.name].subtotal += (checkoutPrice * checkoutQty);
+    //     });
             
-    	return checkoutItemDictionary;
-    }
+    // 	return checkoutItemDictionary;
+    // }
 
     function resizeInput() {
         this.style.width = this.value.length + "ch";
       }
 
+    function setElementsToReadOnly(elements){
+        elements.forEach(element => {
+            element.readOnly = true
+            element.style.cursor = 'auto';
+        })
+
+    }
+
     // Function to display cart items
     function checkoutDisplayCartItems() {
 
-        let checkoutCartItems = checkoutGetCartItems();
+        // let checkoutCartItems = checkoutGetCartItems();
+        let checkoutCartItems = getCartItems();
         // console.log('checkoutCartItems:', checkoutCartItems);
         let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
 
@@ -127,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Create a dictionary to aggregate items by name
-        checkoutItemDictionary = checkoutGetItemDictionary(checkoutCartItems)
+        checkoutItemDictionary = getItemDictionary(checkoutCartItems)
         let checkoutTotal = 0;     
    
         // Iterate over itemDictionary to display each unique item
@@ -165,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Display the totals
         const checkoutTotalTextElemHidden = document.querySelector('#Total-Hidden');
+        checkoutTotalTextElemHidden.readOnly = true;
         const checkoutShippingTextElem = document.querySelector('#Shipping');
         const checkoutShippingTextElemHidden = document.querySelector('#Shipping-Hidden');
         const checkoutVatTextElem = document.querySelector('#VAT');
@@ -172,6 +161,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
         const checkoutGrandTotalTextElemHidden = document.querySelector('#Grand-Total-Hidden');
         // checkoutGrandTotalTextElem.readOnly = true;
+        const readOnlyElems = [
+            checkoutGrandTotalTextElem, 
+            checkoutTotalTextElemHidden, 
+            checkoutShippingTextElem, 
+            checkoutShippingTextElemHidden, 
+            checkoutVatTextElem, 
+            checkoutGrandTotalTextElem,
+            checkoutTotalTextElem,
+            checkoutTotalTextElemHidden
+        ]
+        setElementsToReadOnly(readOnlyElems)
         
         // OVERLAY ELEMENTS
         const checkoutOverlayGrandTotalText = document.querySelector('#overlay-grand-total');
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkoutGrandTotal = (checkoutTotal + 50)    
         const checkoutVatTotal = checkoutGrandTotal * 0.20
 
-        console.log('checkoutGrandTotal:', checkoutGrandTotal)
+        // console.log('checkoutGrandTotal:', checkoutGrandTotal)
 
 		// UPDATE SUMMARY SECTION
         checkoutTotalTextElem.value = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutOverlayOtherItemImage.src = checkoutOverlayImgUrl;
         
         if (checkoutDictionaryLength > 1) {
-            console.log('dictionaryLength > 1')
+            // console.log('dictionaryLength > 1')
         	checkoutOverlayBottomWrapper.style.display = 'flex';
             checkoutOverlayOtherItemsCountText.textContent = `${checkoutDictionaryLength - 1}`;
             let checkoutOverlayOtherItemsPluralDisplay = checkoutDictionaryLength === 2 ? `` : `(s)`;
@@ -253,11 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const countryInputWrapperElem = document.getElementById('country-input-wrapper');   
     const successConfirmationNameElem = document.getElementById('confirmation-text-name');
        
-    function checkoutGetCartLength() {
-        // Get the current cart from localStorage
-        let checkoutCart = JSON.parse(localStorage.getItem('cart')) || [];
-        return checkoutCart.length;
-    }
+
 
     function validateEmail(email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -400,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // event.preventDefault();
 
         let errors = [];
-        const noItemsInCart = checkoutGetCartLength();
+        const noItemsInCart = getCartLength();
         if (noItemsInCart === 0) {
             alert('Cart is empty');
             return;
@@ -426,9 +422,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
       	    navCartItemsCountElem.textContent = '0';
 
-              console.log('submitting')
-              $(this).parents('form').submit() 
-            
+            //   console.log('submitting')
+              $(this).parents('form').submit()      
         }
       }); 
 })

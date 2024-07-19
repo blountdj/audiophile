@@ -1,0 +1,4 @@
+.your-collection-item-class:nth-child(even) {
+    background-color: #ffffff; /* Example style */
+    color: #666; /* Example style */
+  }

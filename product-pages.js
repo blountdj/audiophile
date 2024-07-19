@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-	console.log('page loaded!')
-    // Function to add an item to the cart
-    function addItemToCart(itemToAdd) {
-        // Get the current cart from localStorage
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+	// console.log('page loaded!')
 
+    function addItemToCart(itemToAdd) {
+
+        let cart = getCartItems()
         let itemExists = false;
 
-           // Iterate over the cart to find the item by its ID
+        // Iterate over the cart to find the item by its ID
         cart.forEach(cartItem => {
             if (cartItem.id === itemToAdd.id) {
                 // If item exists, increase its quantity and update the subtotal
@@ -29,39 +28,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        console.log(cart)
-        // Save the updated cart back to localStorage
         localStorage.setItem('cart', JSON.stringify(cart));
     }
     
-    function toggleNavCartItemsCount() {
-    	const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
-        navCartQtyCountElem.style.display = navCartQtyCountElem.textContent === '0' ? 'none' : 'flex';
-    }
-    
-    function addCartItemsCount() {
-        const currentCountElem = document.querySelector('#nav-cart-items-count');
-        console.log('currentCountElem.textContent:', currentCountElem.textContent, 'parseInt(currentCountElem.textContent):', parseInt(currentCountElem.textContent)); 
-        currentCountElem.textContent = parseInt(currentCountElem.textContent) + 1;
-            
-        toggleNavCartItemsCount()
-    }
-
-    function animateCart() {
-        const cartIcon = document.getElementById('nav-cart-icon');
-        cartIcon.classList.add('jiggle');
-
-        // Remove the class after the animation ends to allow for re-triggering
-        cartIcon.addEventListener('animationend', function() {
-            cartIcon.classList.remove('jiggle');
-        }, { once: true });
-    }
 
     // Attach event listeners to all 'add to cart' buttons
     const addToCartBtn = document.querySelector('#add-to-cart');
     addToCartBtn.addEventListener('click', function() {
         // Get product details from data attributes
-        console.log('add to cart - with Jiggle')
+        // console.log('add to cart - with Jiggle')
         let item = {
             id: this.getAttribute('data-id'),
             name: document.querySelector('#product-name').getAttribute('data-name'),
@@ -71,9 +46,18 @@ document.addEventListener('DOMContentLoaded', function() {
             subtotal: parseFloat(document.querySelector('#product-price').getAttribute('data-price'))
         };
         addItemToCart(item);
-        alert('Item added to cart');
-        animateCart()
-        addCartItemsCount()            
+        
+        const navCartIconsCount = document.querySelector('#nav-cart-items-count');
+        if (navCartIconsCount.innerHTML === '0') {
+            addCartItemsCount();
+            showCartCountIcon();
+            enableCheckoutBtn();
+        } else {
+            applyAnimationClass(navCartIconsCount, 'pop-part-1')
+            setTimeout(() => {
+                addCartItemsCount()  
+            }, 250);
+        }
     });
-});
 
+});
