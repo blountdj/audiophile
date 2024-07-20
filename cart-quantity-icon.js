@@ -16,8 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCartCountIcon(qty) {
    	
         if (qty === 0) {
-          navCartQtyCountElem.textContent = '0';
           hideCartCountIcon();
+          setTimeout(() => {
+            navCartQtyCountElem.textContent = '0';
+        }, 250);
+          
+
         } else {
             //  console.log('TO UPDATE QTY:', qty)
              navCartQtyCountElem.textContent = `${qty}`;

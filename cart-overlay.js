@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const totalText = document.querySelector('#total');  
   let cartItemsContainer = document.querySelector('.cart-items');
   const goToCheckoutBtn = document.querySelector('#go-to-checkout-btn') 
+  const cartSummaryBlock = document.querySelector('#cart-summary-block')
 
   function goToCheckoutBtnClick() {
     const displayStyle = overlay.style.display === 'none' ? 'flex' : 'none';
@@ -31,10 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // console.log('toggleOverlayDisplay')
     const buttonWrapper = event.target.closest('[data-toggle="close-cart-overlay"]');
     if (buttonWrapper) {
-      const displayStyle = overlay.style.display === 'none' ? 'flex' : 'none';
-      overlay.style.display = displayStyle;
-      if (overlay.style.display === 'flex') {
+      if (overlay.classList.contains('is-closed')) {
+        overlay.classList.remove('is-closed');        
+        setTimeout(() => {
+          cartSummaryBlock.classList.remove('is-closed');
+        }, 0);
+        overlay.style.display = 'flex'
         cartDisplayCartItems()
+      } else {
+        overlay.classList.add('is-closed');
+        cartSummaryBlock.classList.add('is-closed');
+        setTimeout(() => {
+          overlay.style.display = 'none'
+        }, 200);
+        
       }
     }
   }
@@ -140,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   }  
 
-  // QTY CHANGER    
+   
   function cartHandleQtyChangeClick(event) {
    	// console.log('cartHandleQtyChangeClick')
     let cartItems = getCartItems();
@@ -153,10 +164,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event.target.classList.contains('is-plus')) {
       itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) + 1
       localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
+      cartItems = getCartItems();
       cartDisplayCartItems(cartItems)
   
       cartItemsQtyUpdated = cartItemsQty + 1;
-
       if (cartItemsQtyUpdated === 1) {
         enableCheckoutBtn();
         showCartCountIcon()
@@ -174,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (itemDictionary[name].quantity !== 0) {
       	itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) - 1   
         localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
+        cartItems = getCartItems();
         cartDisplayCartItems(cartItems)
     
         cartItemsQtyUpdated = cartItemsQty - 1;
@@ -225,16 +237,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const button = event.target.closest('.cart-bin-icon-wrapper');
     const itemId = button.dataset.id; // Access the data-id attribute
 
-    // Your logic to remove the item from the cart using itemId
-    let cartItems = getCartItems(); // Assuming you have a function to get the cart items
+    const itemToDelete = event.target.closest('.cart-item'); 
+    itemToDelete.classList.add('to-delete');
+
+    // // Your logic to remove the item from the cart using itemId
+    let cartItems = getCartItems(); 
     cartItems = cartItems.filter(item => item.id !== itemId);
     localStorage.setItem('cart', JSON.stringify(cartItems));
-    cartDisplayCartItems(cartItems); 
-
-    // Update the cart count icon
     const cartTotalQty = getCartItemsQty(cartItems)
-    updateCartCountIcon(cartTotalQty)
-    cartQtyText.textContent = `(${cartTotalQty})`
+    if (cartTotalQty === 0) {
+      updateCartCountIcon(cartTotalQty)
+    } else {
+      applyAnimationClass(navCartQtyCountElem, 'pop-part-1')
+      setTimeout(() => {
+        updateCartCountIcon(cartTotalQty)
+      }, 250);
+      
+    }
+    
+
+    setTimeout(() => {
+      cartDisplayCartItems(cartItems); 
+      cartQtyText.textContent = `(${cartTotalQty})`
+      // Update the cart count icon
+
+    }, 500);
+
   }
 
   function init() {
