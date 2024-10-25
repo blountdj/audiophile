@@ -8,9 +8,9 @@ import {
 } from "./utilities.js";
 
 import { heroIntroLoad, heroOutro, typeTextIndividual } from "./homeAnimations.js";
+import { initTransition, leaveTransition } from "./transitionAnimation.js";
 
-
-
+const categories = ['headphones', 'earphones', 'speakers']
 
 
 // const pageIdentifierTextEnter = async (data) => {
@@ -105,7 +105,6 @@ const animationFadeOutLeave = (data) => {
 };
 
 
-
 barba.hooks.beforeEnter((data) => {
     window.scrollTo(0, 0); // Scroll to the top of the page
 
@@ -134,7 +133,10 @@ barba.hooks.once((data) => {
             typingAnimation.play();  // Start the animation
         }, 3500);
     }
-
+    if (categories.includes(data.next.namespace)) {
+        console.log('CATEGORIES')
+        heroIntroLoad(data.next.container, '.category-hero', 0.75);
+    }
 });
 
 
@@ -144,9 +146,6 @@ const productsAnimationsJsFileUrl = `http://127.0.0.1:5500/productsAnimations.js
 const checkoutAnimationsJsFileUrl = `http://127.0.0.1:5500/checkoutAnimations.js`
 // const gsapTextPluginUrl = `https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/TextPlugin.min.js`
 // const pageSpecificScriptUrl = `https://cdn.jsdelivr.net/gh/blountdj/arch-studio@v1/home.js`
-
-const categories = ['headphones', 'earphones', 'speakers']
-
 
 
 barba.hooks.afterEnter((data) => {
@@ -181,14 +180,17 @@ barba.init({
             async leave(data) {
                 console.log('\nLEAVE -', data.current.namespace)
 
-                const outroSelector = categories.includes(data.current.namespace) ? '.category-hero' : '.home-hero'
+                initTransition(data)
+                animationFadeOutLeave(data);
+                await leaveTransition()
 
-                await heroOutro(data.current.container, outroSelector);
-                await animationFadeOutLeave(data);
+                // const outroSelector = categories.includes(data.current.namespace) ? '.category-hero' : '.home-hero'
+                // await heroOutro(data.current.container, outroSelector);
+                
             },
 
             async enter(data) {
-                // console.log('\nENTER')
+                console.log('\nENTER')
                 const introSelector = categories.includes(data.next.namespace) ? '.category-hero' : '.home-hero'
             
                 heroIntroLoad(data.next.container, introSelector)

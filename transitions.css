@@ -1,0 +1,64 @@
+.transition-smooth {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .transition_wrapper-smooth {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 800px;
+  }
+  .transition_figure {
+    position: absolute;
+    border: 1rem solid white;
+    /* border: 1rem solid #d87d4a; */
+    
+  }
+  
+  .transition_figure:nth-child(1) {
+    left: 68vw;
+    top: -5vw;
+    width: 32vw;
+    height: 40vw;
+  }
+  .transition_figure:nth-child(2) {
+    right: 0;
+    bottom: -15vh;
+    width: 28vw;
+    height: 30vw;
+  }
+  .transition_figure:nth-child(3) {
+    left: -5vw;
+    top: 0;
+    width: 36vw;
+    height: 50vw;
+  }
+  .transition_figure:nth-child(4) {
+    right: -20rem;
+    top: 0;
+    width: 34vw;
+    height: 40vw;
+  }
+  .transition_figure:nth-child(5) {
+    left: 0;
+    bottom: -35vh;
+    width: 22vw;
+    height: 38vw;
+  }
+  .transition_figure:nth-child(6) {
+    left: 25rem;
+    bottom: -20vh;
+    width: 49vw;
+    height: 45vw;
+  }
+  .transition_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  

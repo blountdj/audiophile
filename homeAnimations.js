@@ -2,7 +2,7 @@ console.log('homeAnimations.js')
 
 
 
-export function heroIntroLoad(container, selector) {
+export function heroIntroLoad(container, selector, delay = 0) {
     console.log('heroIntroLoad')
     const heroElem = container.querySelector(selector)
     gsap.set(heroElem, {
@@ -11,6 +11,7 @@ export function heroIntroLoad(container, selector) {
     gsap.to(heroElem, {
         yPercent: 0,
         duration: 0.75,
+        delay: delay,
         ease: 'power4.inOut'
     })
 }
