@@ -1,13 +1,11 @@
 console.log('homeAnimations.js')
 
-
-
 export function heroIntroLoad(container, selector, delay = 0) {
     console.log('heroIntroLoad')
     const heroElem = container.querySelector(selector)
-    gsap.set(heroElem, {
-        yPercent: -100
-    })
+    // gsap.set(heroElem, {
+    //     yPercent: -100
+    // })
     gsap.to(heroElem, {
         yPercent: 0,
         duration: 0.75,

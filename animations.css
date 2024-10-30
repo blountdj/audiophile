@@ -1,0 +1,23 @@
+/* SPIN ANIMATION - PRODUCTS*/
+.product-price-wrapper {
+    display: block;
+    overflow: hidden;
+}
+.product-price-wrapper-title {
+    display: inline-flex;
+}
+.product-price-wrapper-title div {
+    text-shadow: black 0em 0.9em 0px, black 0em 1.8em 0px;
+}
+
+/* SPIN ANIMATION - CATEGORIES */
+.category-h1-wrapper {
+    display: block;
+    overflow: hidden;
+}
+.category-h1 {
+    display: inline-flex;
+}
+.category-h1 div {
+    text-shadow: white 0em 0.95em 0px, white 0em 1.9em 0px;
+}

@@ -8,7 +8,13 @@ import {
 } from "./utilities.js";
 
 import { heroIntroLoad, heroOutro, typeTextIndividual } from "./homeAnimations.js";
-import { initTransition, leaveTransition } from "./transitionAnimation.js";
+import { 
+    initTransition, 
+    leaveTransition, 
+    productsHeroEnter, 
+    categoryAnimation, 
+    fadeOutNavA
+ } from "./transitionAnimation.js";
 
 const categories = ['headphones', 'earphones', 'speakers']
 
@@ -170,8 +176,8 @@ barba.init({
     transitions: [
         {
             name: 'home-intro-transition',
-            to: { namespace: [...categories, 'home'] },
-            from: { namespace: [...categories, 'home'] },
+            to: { namespace: [...categories, 'home', 'products'] },
+            from: { namespace: [...categories, 'home', 'products'] },
             once(data) {},
                
             beforeEnter() {
@@ -182,42 +188,58 @@ barba.init({
 
                 initTransition(data)
                 animationFadeOutLeave(data);
-                await leaveTransition()
+                fadeOutNavA(data)
+                await leaveTransition(data)
 
                 // const outroSelector = categories.includes(data.current.namespace) ? '.category-hero' : '.home-hero'
                 // await heroOutro(data.current.container, outroSelector);
                 
             },
 
+
             async enter(data) {
                 console.log('\nENTER')
                 const introSelector = categories.includes(data.next.namespace) ? '.category-hero' : '.home-hero'
-            
-                heroIntroLoad(data.next.container, introSelector)
-                await animationFadeInEnter(data);
+        
 
                 if (data.next.namespace === 'home') {
 
-                //     /* Typing Animation */
-                setTimeout(() => {
-                        let typingAnimation = typeTextIndividual(data.next.container, 'new product');
-                        typingAnimation.play();  // Start the animation
-                    }, 3500);
+                    //     /* Typing Animation */
+                    setTimeout(() => {
+                            let typingAnimation = typeTextIndividual(data.next.container, 'new product');
+                            typingAnimation.play();  // Start the animation
+                        }, 3500);
+
+                        heroIntroLoad(data.next.container, introSelector)
+                        await animationFadeInEnter(data);
+
+                } else if (categories.includes(data.next.namespace)) {
+                    categoryAnimation(data.next.container, introSelector)
+
+                }
+
+                else if (data.next.namespace === 'products') {
+
+                    productsHeroEnter(data)
+
+                } else {
+                    heroIntroLoad(data.next.container, introSelector)
+                    await animationFadeInEnter(data);
                 }
             },
         },
-        {
-            name: 'page-fade-transition',
-            // to: { namespace: ['todo'] },
-            once() {},
-            async leave(data) {
-                console.log('\n\nLEAVE')
-                await animationFadeOutLeave(data);
-            },
-            async enter(data) {
-                console.log('\n\nENTER')
-                await animationFadeInEnter(data);
-            },
-        },
+        // {
+        //     name: 'page-fade-transition',
+        //     // to: { namespace: ['todo'] },
+        //     once() {},
+        //     async leave(data) {
+        //         console.log('\n\nLEAVE')
+        //         await animationFadeOutLeave(data);
+        //     },
+        //     async enter(data) {
+        //         console.log('\n\nENTER')
+        //         await animationFadeInEnter(data);
+        //     },
+        // },
     ]
 });
