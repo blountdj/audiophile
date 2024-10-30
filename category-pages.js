@@ -10,3 +10,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+export function categoryPageInit() {
+    new SplitType(".category-item-h2", {
+        types: "words, chars",
+    });
+    
+    const textContainers = document.querySelectorAll(".category-item-h2 >.word");
+    const defaultScale = 1;
+    const maxScale = 1.6;
+    const neighborScale = 1.3;
+    
+    textContainers.forEach((textContainer) => {
+    const spans = textContainer.querySelectorAll(".char");
+    
+    textContainer.addEventListener("mousemove", (e) => {
+        const target = e.target;
+        const index = Array.from(spans).indexOf(target);
+    
+        spans.forEach((span, i) => {
+        let scale = defaultScale;
+    
+        if (i === index) {
+            // Scale the hovered span to 2
+            scale = maxScale;
+        } else if (i === index - 1 || i === index + 1) {
+            // Scale the side neighbors to 1.5
+            scale = neighborScale;
+        }
+    
+        span.style.transform = `scaleY(${scale})`;
+        });
+    });
+    
+    textContainer.addEventListener("mouseleave", () => {
+        spans.forEach((span) => {
+        span.style.transform = `scaleY(${defaultScale})`;
+        });
+    });
+    });
+
+}

@@ -2,3 +2,13 @@
     background-color: #ffffff; /* Example style */
     color: #666; /* Example style */
   }
+
+/* .category-h1 > .word > .char {
+  transition: 400ms cubic-bezier(0.075, 0.82, 0.165, 1);
+  transform-origin: bottom;
+} */
+
+.category-item-h2 > .word > .char {
+  transition: 400ms cubic-bezier(0.075, 0.82, 0.165, 1);
+  transform-origin: bottom;
+}

@@ -30,3 +30,11 @@ export function addScriptsToBody(scripts) {
 //     document.body.appendChild(scriptElem);
 //   })
 // }
+
+export function createCSSFileLink(file) {
+  const cssFileUrl = file;
+  const linkTag = document.createElement('link');
+  linkTag.rel = 'stylesheet';
+  linkTag.href = cssFileUrl;
+  return linkTag
+}

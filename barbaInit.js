@@ -4,6 +4,7 @@ import {
     // textSplit,
     removeScriptsFromBody,
     addScriptsToBody,
+    createCSSFileLink
     // addScriptsToBodyNotModule
 } from "./utilities.js";
 
@@ -15,6 +16,7 @@ import {
     categoryAnimation, 
     fadeOutNavA
  } from "./transitionAnimation.js";
+ import { categoryPageInit } from "./category-pages.js";
 
 const categories = ['headphones', 'earphones', 'speakers']
 
@@ -215,7 +217,10 @@ barba.init({
 
                 } else if (categories.includes(data.next.namespace)) {
                     categoryAnimation(data.next.container, introSelector)
-
+                    setTimeout(() => {
+                        categoryPageInit()
+                        document.head.appendChild(createCSSFileLink('http://127.0.0.1:5500/category-pages.css'));
+                    }, 4000);
                 }
 
                 else if (data.next.namespace === 'products') {
