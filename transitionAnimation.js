@@ -157,6 +157,12 @@ export const leaveTransition = () => {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
+// export function setNavOpacityZero(container) {
+//     const elems = container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper')
+//     gsap.set(elems, { opacity: 0 })
+// }
+
+
 export function fadeOutNavA(data) {
     console.log('fadeOutNavA')
     const elems = data.current.container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper')
@@ -286,9 +292,7 @@ export const productsHeroEnter = async (data) => {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 function addShuffleEffect(element, chars) {
-    console.log('addShuffleEffect')
-
-    console.log('element1:', element)
+    // console.log('addShuffleEffect')
 
     return new Promise((resolve, reject) => {
         // const chars = element.querySelectorAll(".char");
@@ -299,26 +303,15 @@ function addShuffleEffect(element, chars) {
         const opacityDelay = 50; // Adjust this to fine-tune the opacity change timing
         const initialDelay = 100; // Introduce a slight initial delay for all characters
 
-        // Initialize all characters with opacity 0
-        // chars.forEach((char) => {
-        //     // gsap.set(char, { opacity: 0 });
-        //     console.log('char:', char)
-        // });
-
         gsap.set(element, {
             opacity: 1,
         });
-        console.log('element2:', element)
-
 
         chars.forEach((char, index) => {
             if (index === 0) {
                 gsap.set(char, { opacity: 1 }); // Explicitly set opacity to 1 for the first character
             }
         });
-
-        // Explicitly animate the first character's opacity to 1
-        // gsap.to(chars[0], { opacity: 1, duration: 0.1, delay: initialDelay });
 
         chars.forEach((char, index) => {
             // Delay the start of each character's animation based on its index, plus the initial delay
@@ -353,7 +346,6 @@ function addShuffleEffect(element, chars) {
     });
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 /* CATEGORIES */
 
@@ -366,8 +358,6 @@ const getCategoryElement = (container) => {
         catTitle: container.querySelector('.category-h1'),
         catTitleChars: container.querySelector('.category-h1 > div'),
 
-        // catProductH2: container.querySelector('.category-item-h2'),
-
         catImgWrapper: container.querySelector('.category-item-image-wrapper-wrapper'),
         catH2: container.querySelector('.category-item-h2'),
         catH2Chars: container.querySelectorAll('.category-item-h2 > div > div'),
@@ -378,21 +368,15 @@ const getCategoryElement = (container) => {
         catBtnElemBottom: container.querySelector('.btn-elem-bottom'),
 
         catBtn: container.querySelector('.btn-1'),
+        catBtnText: container.querySelector('.btn-1-text'),
     }
 }
 
 export function initCategories(elem) {
     return new Promise((resolve, reject) => {
 
-        const chars = elem.catH2.querySelectorAll(".char");
-
-        // chars.forEach((char) => {
-        //     gsap.set(char, { opacity: 0 });
-        //     console.log('char:', char)
-        // });
-
-        console.log('initCategories')
-        console.log('elem.catTitleChars:', elem.catTitleChars)
+        // console.log('initCategories')
+        // console.log('elem.catTitleChars:', elem.catTitleChars)
 
         gsap.set(elem.catHero, {
             yPercent: -100
@@ -406,23 +390,16 @@ export function initCategories(elem) {
 
         gsap.set(elem.catNewProduct, { opacity: 0, yPercent: 100 })
 
-
         gsap.set([elem.catTitle], { yPercent: -250, rotate: -15 });
         gsap.set([elem.catTitleChars], { yPercent: -100 });
 
-
-        gsap.set(elem.catBtn, {
+        gsap.set(elem.catBtnText, {
             color: '#d87d4a',
         });
 
         gsap.set([elem.catBtnElemTop, elem.catBtnElemBottom], {
             scaleY: 1,
         });
-
-        // chars.forEach((char) => {
-        //     // gsap.set(char, { opacity: 0 });
-        //     console.log(char)
-        // });
 
         resolve();
     });
@@ -438,8 +415,8 @@ function catHeroMoveTest(elem) {
         
 }
 
-const navBarFadeIn = (elem) => {
-    gsap.to(elem.catNavBarA, { opacity: 1, duration: 0.25, stagger: 0.075, ease: 'power4.inout' })
+export const navBarFadeIn = (elem) => {
+    gsap.to(elem, { opacity: 1, duration: 0.25, stagger: 0.075, ease: 'power4.inout' })
 }
 
 const moveToZeroYPercent = (element) => {
@@ -451,48 +428,29 @@ const moveToZeroYPercent = (element) => {
 }
 
 export const categoryAnimation = async (container, introSelector) => {
-    new SplitType(container.querySelector('.category-h1'), {
-        types: "words, chars",
-    });
 
-    new SplitType(container.querySelector('.category-item-h2'), {
-        types: "words, chars",
-    });
+    new SplitType(container.querySelector('.category-h1'), {types: "words, chars"});
+    new SplitType(container.querySelector('.category-item-h2'), {types: "words, chars"});
     
     const categoryElement = getCategoryElement(container)
 
-    // console.log('categoryElement.catH2 - 1:', categoryElement.catH2)
-
     await initCategories(categoryElement)
 
-
-    // console.log('categoryElement.catH2 - 2:', categoryElement.catH2)
-
-    // console.log('catH2Chars:', categoryElement.catH2Chars)
-
-    // categoryElement.catH2Chars.forEach((char) => {
-    //     console.log(char);
-    // });
-
-    const animationTimeline = gsap.timeline({ 
-        defaults: { ease: 'power4.inout' }
-    })
-    
-        .add(() => navBarFadeIn(categoryElement), 0) // Starts 0.75s after the previous animation
+    gsap.timeline({ defaults: { ease: 'power4.inout' }})
+        .add(() => navBarFadeIn(categoryElement.catNavBarA), 0) // Starts 0.75s after the previous animation
         .add(() => heroIntroLoad(container, introSelector), 0.5)
         .add(() => animateSpin(categoryElement.catTitle, categoryElement.catTitleChars), 0.8) // Starts 0.75s after the previous animation
         .add(() => catHeroMoveTest(categoryElement), 1.5) // Starts 0.75s after the previous animation
-        // .add(() => addShuffleEffect(categoryElement.catH2), 1.7) // Starts 0.5s after the previous animation
         .add(() => addShuffleEffect(categoryElement.catH2, categoryElement.catH2Chars), 1.7) // Starts 0.5s after the previous animation
         .add(() => fadeIn(categoryElement.catParagraph), 2.3) // Starts 0.75s after the previous animation
         .add(() => scaleToZero(categoryElement.catBtnElemTop, 'top'), 2.4) // Starts 1s after the previous animation
         .add(() => scaleToZero(categoryElement.catBtnElemBottom, 'bottom'), 2.4) // Starts 1s after the previous animation
-        .add(() => colorChange(categoryElement.catBtn), 2.6) // Starts 0.75s after the previous animation
+        .add(() => colorChange(categoryElement.catBtnText), 2.6) // Starts 0.75s after the previous animation
         .add(() => moveToZeroYPercent(categoryElement.catNewProduct), 3) // Starts 0.75s after the previous animation
         
 
-    setTimeout(() => {
-        // categoryElement.categoryTitle.innerHTML = categoryElement.categoryTitle.textContent
-    }, 2000);
+    // setTimeout(() => {
+    //     // categoryElement.categoryTitle.innerHTML = categoryElement.categoryTitle.textContent
+    // }, 2000);
     
 }

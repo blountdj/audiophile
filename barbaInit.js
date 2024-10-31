@@ -4,19 +4,27 @@ import {
     // textSplit,
     removeScriptsFromBody,
     addScriptsToBody,
-    createCSSFileLink
+    addFilesCssToBody,
+    removeCssFilesFromBody,
+    createCSSFileLink,
+    // applyAnimationClass,
+    // getCartItems
     // addScriptsToBodyNotModule
 } from "./utilities.js";
+// import {   } from "./common.js";
 
-import { heroIntroLoad, heroOutro, typeTextIndividual } from "./homeAnimations.js";
+import { cartQtyIconInit } from "./cart-quantity-icon.js";
+
+import { homeLoadController, heroOutro, typeTextIndividual } from "./homeAnimations.js";
 import { 
     initTransition, 
     leaveTransition, 
     productsHeroEnter, 
     categoryAnimation, 
-    fadeOutNavA
+    fadeOutNavA,
+    navBarFadeIn
  } from "./transitionAnimation.js";
- import { categoryPageInit } from "./category-pages.js";
+ import { categoryPageInit, btnHoverAnimation } from "./category-pages.js";
 
 const categories = ['headphones', 'earphones', 'speakers']
 
@@ -115,46 +123,47 @@ const animationFadeOutLeave = (data) => {
 
 barba.hooks.beforeEnter((data) => {
     window.scrollTo(0, 0); // Scroll to the top of the page
-
-    // console.log('barba.hooks.beforeEnter')
-    // return new Promise((resolve) => {
-    //     if (data.next.namespace === 'home') {
-    //         addScriptsToBodyNotModule([gsapTextPluginUrl]);
-    //     } else {
-    //         removeScriptsFromBody([gsapTextPluginUrl]);
-    //     }
-    //     resolve();
-    // });
 });
 
 barba.hooks.once((data) => {
     console.log('barba.hooks.once')
-    console.log('data:', data)
-    console.log('data.next.namespace:', data.next.namespace)
+    // console.log('data:', data)
+    // console.log('data.next.namespace:', data.next.namespace)
+
+    window.scrollTo(0, 0);
+
+    const navBar = data.next.container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper')
+    gsap.set(navBar, { opacity: 0 })
+
     if (data.next.namespace === 'home') {
-        console.log('--IF')
-        /* Typing Animation */
-        const typedTextElement = data.next.container.querySelector('.typed-text');
-        typedTextElement.textContent = '';
+        homeLoadController(data.next.container)
+
+    } else if (categories.includes(data.next.namespace)) {
         setTimeout(() => {
-            let typingAnimation = typeTextIndividual(data.next.container, 'new product');
-            typingAnimation.play();  // Start the animation
-        }, 3500);
-    }
-    if (categories.includes(data.next.namespace)) {
-        console.log('CATEGORIES')
+            navBarFadeIn(navBar)
+        }, 525)
         heroIntroLoad(data.next.container, '.category-hero', 0.75);
+    } else if (data.next.namespace === 'products') {
+        setTimeout(() => {
+            navBarFadeIn(navBar)
+        }, 525)
+        
+    } else {
+        setTimeout(() => {
+            navBarFadeIn(navBar)
+        }, 525)
     }
+
 });
 
 
-const homeAnimationsJsFileUrl = `http://127.0.0.1:5500/homeAnimations.js`
+const homeAnimationsJsFileUrls = [`http://127.0.0.1:5500/homeAnimations.js`, 'https://cdn.jsdelivr.net/gh/blountdj/audiophile@v2/home.js']
 const categoriesAnimationsJsFileUrl = `http://127.0.0.1:5500/categoriesAnimations.js`
 const productsAnimationsJsFileUrl = `http://127.0.0.1:5500/productsAnimations.js`
 const checkoutAnimationsJsFileUrl = `http://127.0.0.1:5500/checkoutAnimations.js`
 // const gsapTextPluginUrl = `https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/TextPlugin.min.js`
 // const pageSpecificScriptUrl = `https://cdn.jsdelivr.net/gh/blountdj/arch-studio@v1/home.js`
-
+const homeCssFileUrl = `http://127.0.0.1:5500/home.css`
 
 barba.hooks.afterEnter((data) => {
     // console.log('barba.hooks.afterEnter')
@@ -162,7 +171,15 @@ barba.hooks.afterEnter((data) => {
     const nextPageId = data.next.namespace; // Assuming your container has an ID that matches the page
     // console.log('currentPageId:', currentPageId)
     
-    nextPageId === 'home' ? addScriptsToBody([homeAnimationsJsFileUrl]) : removeScriptsFromBody([homeAnimationsJsFileUrl])
+    if (nextPageId === 'home') {
+        addScriptsToBody(homeAnimationsJsFileUrls)
+        addFilesCssToBody([homeCssFileUrl])
+    } else {
+        removeScriptsFromBody(homeAnimationsJsFileUrls)
+        removeCssFilesFromBody([homeCssFileUrl])
+    }
+
+
     categories.some(category => nextPageId.includes(category)) && !categories.some(category => currentPageId.includes(category)) ? addScriptsToBody([categoriesAnimationsJsFileUrl]) : removeScriptsFromBody([categoriesAnimationsJsFileUrl])
     nextPageId === 'products' && !currentPageId === 'products' ? addScriptsToBody([productsAnimationsJsFileUrl]) : removeScriptsFromBody([productsAnimationsJsFileUrl])
     nextPageId === 'checkout' ? addScriptsToBody([checkoutAnimationsJsFileUrl]) : removeScriptsFromBody([checkoutAnimationsJsFileUrl])
@@ -180,10 +197,14 @@ barba.init({
             name: 'home-intro-transition',
             to: { namespace: [...categories, 'home', 'products'] },
             from: { namespace: [...categories, 'home', 'products'] },
-            once(data) {},
+            once() {},
                
-            beforeEnter() {
-              
+            beforeEnter(data) {
+              console.log('beforeEnter')
+              if (data.next.namespace === 'home') {
+                const hero = data.next.container.querySelector('.home-hero')
+                gsap.set(hero, { yPercent: -105 })
+              }
             },
             async leave(data) {
                 console.log('\nLEAVE -', data.current.namespace)
@@ -211,8 +232,8 @@ barba.init({
                             let typingAnimation = typeTextIndividual(data.next.container, 'new product');
                             typingAnimation.play();  // Start the animation
                         }, 3500);
-
-                        heroIntroLoad(data.next.container, introSelector)
+                        homeLoadController(data.next.container)
+                        // heroIntroLoad(data.next.container, introSelector)
                         await animationFadeInEnter(data);
 
                 } else if (categories.includes(data.next.namespace)) {
@@ -220,6 +241,7 @@ barba.init({
                     setTimeout(() => {
                         categoryPageInit()
                         document.head.appendChild(createCSSFileLink('http://127.0.0.1:5500/category-pages.css'));
+                        // btnHoverAnimation(data.next.container)
                     }, 4000);
                 }
 
@@ -232,7 +254,26 @@ barba.init({
                     await animationFadeInEnter(data);
                 }
             },
-        },
+            afterEnter(data) {
+                console.log('afterEnter')
+                cartQtyIconInit(data.next.container)
+                // const cartItems = getCartItems()
+                // console.log('cartItems:', cartItems)
+
+                // const navCartIconsCount = document.querySelector('#nav-cart-items-count');
+                // applyAnimationClass(navCartIconsCount, 'pop-part-1')
+                // const navCartIconsCount = document.querySelector('#nav-cart-items-count');
+                // if (navCartIconsCount.innerHTML === '0') {
+                //     addCartItemsCount();
+                //     showCartCountIcon();
+                //     enableCheckoutBtn();
+                // } else {
+                //     applyAnimationClass(navCartIconsCount, 'pop-part-1')
+                //     setTimeout(() => {
+                //         addCartItemsCount()  
+                //     }, 250);
+                // }
+            },
         // {
         //     name: 'page-fade-transition',
         //     // to: { namespace: ['todo'] },
@@ -246,5 +287,6 @@ barba.init({
         //         await animationFadeInEnter(data);
         //     },
         // },
+        }
     ]
 });

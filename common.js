@@ -68,6 +68,13 @@ document.addEventListener('DOMContentLoaded', function() {
         goToCheckoutBtn.href = "/checkout"
     }
 
+    function initCart() {
+      const cartItems = getCartItems()
+      const cartItemsQty = getCartItemsQty(cartItems)
+      const cartDictionary = getItemDictionary(cartItems)
+      
+    }
+
   
     // Export the function to the global scope
     window.getCartItems = getCartItems;

@@ -50,4 +50,52 @@ export function categoryPageInit() {
     });
     });
 
+
 }
+
+
+/////////////////////////////////////////////////////////////////////////
+/* Btn Hover Animation */
+
+export const btnHoverAnimation = (container) => {
+
+    const wrapper = container.querySelectorAll(".btn-wrapper");
+    const btnText = container.querySelectorAll(".btn-wrapper > .btn-1");
+
+    wrapper.forEach((wrapper) => {
+        wrapper.addEventListener("mousemove", (e) => moveEvent(e, wrapper, btnText));
+        wrapper.addEventListener("mouseleave", (e) => leaveEvent(e, wrapper, btnText));
+    })
+}
+
+const moveEvent = (e, wrapper, btnText) => {
+    // console.log('moveEvent')
+  const wrapperRect = wrapper.getBoundingClientRect();
+
+  const relX = e.clientX - (wrapperRect.left + wrapperRect.width / 2);
+  const relY = e.clientY - (wrapperRect.top + wrapperRect.height / 2);
+
+  const textMaxDisplacement = 35;
+
+  const textDisplacementX = (relX / wrapperRect.width) * textMaxDisplacement;
+  const textDisplacementY = (relY / wrapperRect.height) * textMaxDisplacement;
+
+  gsap.to(btnText, {
+    x: textDisplacementX,
+    y: textDisplacementY,
+    // ease: "power3.inout",
+    duration: 0.35,
+  });
+};
+
+const leaveEvent = (e, wrapper, btnText) => {
+    // console.log('leaveEvent')
+  gsap.to([btnText], {
+    x: 0,
+    y: 0,
+    // ease: "power3.inout",
+    duration: 1,
+  });
+};
+
+

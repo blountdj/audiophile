@@ -12,3 +12,13 @@
   transition: 400ms cubic-bezier(0.075, 0.82, 0.165, 1);
   transform-origin: bottom;
 }
+
+
+div.btn-wrapper {
+  transition: transform 0.3s ease-in-out;
+}
+
+div.btn-wrapper:hover .btn-1-text {
+  transform: translateY(-34px);
+}
+
