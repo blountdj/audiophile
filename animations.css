@@ -6,9 +6,17 @@
 .product-price-wrapper-title {
     display: inline-flex;
 }
-.product-price-wrapper-title div {
+.product-price-wrapper-title div, .product-price-wrapper-title div.word {
     text-shadow: black 0em 0.9em 0px, black 0em 1.8em 0px;
 }
+
+
+
+
+div.btn-wrapper:hover .btn-1-text {
+    transform: translateY(-34px);
+  }
+
 
 /* SPIN ANIMATION - CATEGORIES */
 .category-h1-wrapper {

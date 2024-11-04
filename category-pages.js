@@ -1,7 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('category pages')
-    // Get all elements with the class 'category-item-img-wrapper'
-    const items = document.querySelectorAll('.category-item-image-wrapper-wrapper');
+
+export function alternateCategoryItems(container) {
+    const items = container.querySelectorAll('.category-item-image-wrapper-wrapper');
     
     // Iterate over the items and add 'is-last' class to every other item
     items.forEach((item, index) => {
@@ -9,14 +8,32 @@ document.addEventListener('DOMContentLoaded', function() {
             item.classList.add('is-last');
         }
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // console.log('category pages')
+    // Get all elements with the class 'category-item-img-wrapper'
+    // const items = document.querySelectorAll('.category-item-image-wrapper-wrapper');
+    
+    // // Iterate over the items and add 'is-last' class to every other item
+    // items.forEach((item, index) => {
+    //     if (index % 2 === 1) {
+    //         item.classList.add('is-last');
+    //     }
+    // });
+    alternateCategoryItems(document)
 });
 
-export function categoryPageInit() {
+export function categoryPageInit(container) {
+    console.log('categoryPageInit')
+
+    alternateCategoryItems(container)
+
     new SplitType(".category-item-h2", {
         types: "words, chars",
     });
     
-    const textContainers = document.querySelectorAll(".category-item-h2 >.word");
+    const textContainers = container.querySelectorAll(".category-item-h2 >.word");
     const defaultScale = 1;
     const maxScale = 1.6;
     const neighborScale = 1.3;
@@ -45,9 +62,9 @@ export function categoryPageInit() {
     
     textContainer.addEventListener("mouseleave", () => {
         spans.forEach((span) => {
-        span.style.transform = `scaleY(${defaultScale})`;
+            span.style.transform = `scaleY(${defaultScale})`;
+            });
         });
-    });
     });
 
 

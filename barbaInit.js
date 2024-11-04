@@ -1,5 +1,6 @@
 console.log('barbaInit.js loaded')
 
+import { CONFIG } from "./config.js";
 import { 
     // textSplit,
     removeScriptsFromBody,
@@ -11,20 +12,31 @@ import {
     // getCartItems
     // addScriptsToBodyNotModule
 } from "./utilities.js";
-// import {   } from "./common.js";
+
 
 import { cartQtyIconInit } from "./cart-quantity-icon.js";
-
-import { homeLoadController, heroOutro, typeTextIndividual } from "./homeAnimations.js";
+import { cartOverlayInit } from "./cart-overlay.js";
+import { homeLoadController, homeInit, getHomeElement } from "./homeAnimations.js";
+import { checkoutInit } from "./checkout.js"
 import { 
     initTransition, 
     leaveTransition, 
-    productsHeroEnter, 
-    categoryAnimation, 
-    fadeOutNavA,
-    navBarFadeIn
- } from "./transitionAnimation.js";
- import { categoryPageInit, btnHoverAnimation } from "./category-pages.js";
+} from "./transitionAnimation.js";
+
+import { initProductPage } from "./product-pages.js";
+import { productsHeroEnter } from "./productAnimations.js";
+
+import { 
+   navBarFadeIn,
+   typeTextIndividual,
+   fadeOutNavA,
+   heroIntroLoad
+} from "./animations.js";
+
+import { categoryPageInit, alternateCategoryItems } from "./category-pages.js";
+
+
+import { categoryAnimation } from "./categoriesAnimations.js";
 
 const categories = ['headphones', 'earphones', 'speakers']
 
@@ -80,7 +92,7 @@ const categories = ['headphones', 'earphones', 'speakers']
 // }
 
 const animationFadeInEnter = ((data) => {
-    console.log('------animationFadeInEnter')
+    // console.log('------animationFadeInEnter')
     // gsap.from(container, {
     gsap.set('.app', {
         autoAlpha: 0,
@@ -101,7 +113,7 @@ const animationFadeInEnter = ((data) => {
 
 // export const animationFadeOutLeave = (container) => {
 const animationFadeOutLeave = (data) => {
-    console.log('------animationFadeOutLeave');
+    // console.log('------animationFadeOutLeave');
     return new Promise((resolve) => {
         // gsap.set('.char', { opacity: 0 });
         // gsap.to(container, {
@@ -126,7 +138,7 @@ barba.hooks.beforeEnter((data) => {
 });
 
 barba.hooks.once((data) => {
-    console.log('barba.hooks.once')
+    // console.log('barba.hooks.once')
     // console.log('data:', data)
     // console.log('data.next.namespace:', data.next.namespace)
 
@@ -136,7 +148,48 @@ barba.hooks.once((data) => {
     gsap.set(navBar, { opacity: 0 })
 
     if (data.next.namespace === 'home') {
-        homeLoadController(data.next.container)
+
+        // console.log('ONCE- HOME')
+        const introOverlay = document.querySelector('.intro-overlay')
+        const barOverlay = document.querySelector('.bar-overlay')
+        const introLogo = document.querySelector('.intro-logo')
+        const introBars = document.querySelectorAll('.bar')
+        homeLoadController(data.next.container, false)
+        // homeInit(homeElem)
+
+        const tl = gsap.timeline()
+        tl.to(introBars, {
+            // delay: 0.25,
+            x: 0,
+            duration: 1,
+            ease: "power4.inOut",
+            stagger: {
+                amount: 0.5,
+                from: "random",
+            },
+        }, 0.25);
+        tl.to(introLogo, {
+            opacity: 1,
+            duration: 0.5,
+            repeat: 3,
+            yoyo: true
+        }, 1.5);
+        tl.set(introOverlay, { autoAlpha: 0 });
+        tl.to(introBars, {
+            xPercent: 101,
+            duration: 1,
+            ease: "power4.inOut",
+            stagger: {
+              amount: 0.5,
+              from: "random",
+            },
+          }, 3);
+        tl.set(barOverlay, { autoAlpha: 0 });
+
+        setTimeout(() => {
+            homeLoadController(data.next.container, true)
+        }, 4000);
+
 
     } else if (categories.includes(data.next.namespace)) {
         setTimeout(() => {
@@ -147,7 +200,11 @@ barba.hooks.once((data) => {
         setTimeout(() => {
             navBarFadeIn(navBar)
         }, 525)
-        
+    } else if (data.next.namespace === 'checkout') {
+        // checkoutInit(data.next.container)
+        setTimeout(() => {
+            navBarFadeIn(navBar)
+        }, 525)
     } else {
         setTimeout(() => {
             navBarFadeIn(navBar)
@@ -188,26 +245,26 @@ barba.hooks.afterEnter((data) => {
 
 
 barba.init({
-    debug: false,
+    debug: CONFIG.barbaDebug,
     sync: false,
     views: [
     ],
     transitions: [
         {
             name: 'home-intro-transition',
-            to: { namespace: [...categories, 'home', 'products'] },
-            from: { namespace: [...categories, 'home', 'products'] },
+            to: { namespace: [...categories, 'home', 'products', 'checkout'] },
+            from: { namespace: [...categories, 'home', 'products', 'checkout'] },
             once() {},
                
             beforeEnter(data) {
-              console.log('beforeEnter')
+            //   console.log('beforeEnter')
               if (data.next.namespace === 'home') {
                 const hero = data.next.container.querySelector('.home-hero')
                 gsap.set(hero, { yPercent: -105 })
               }
             },
             async leave(data) {
-                console.log('\nLEAVE -', data.current.namespace)
+                // console.log('\nLEAVE -', data.current.namespace)
 
                 initTransition(data)
                 animationFadeOutLeave(data);
@@ -239,7 +296,6 @@ barba.init({
                 } else if (categories.includes(data.next.namespace)) {
                     categoryAnimation(data.next.container, introSelector)
                     setTimeout(() => {
-                        categoryPageInit()
                         document.head.appendChild(createCSSFileLink('http://127.0.0.1:5500/category-pages.css'));
                         // btnHoverAnimation(data.next.container)
                     }, 4000);
@@ -247,32 +303,33 @@ barba.init({
 
                 else if (data.next.namespace === 'products') {
 
-                    productsHeroEnter(data)
+                    productsHeroEnter(data.next.container)
 
+                } else if (data.next.namespace === 'checkout') {
+                    checkoutInit(data.next.container) 
                 } else {
                     heroIntroLoad(data.next.container, introSelector)
                     await animationFadeInEnter(data);
                 }
             },
             afterEnter(data) {
-                console.log('afterEnter')
+                // console.log('afterEnter')
                 cartQtyIconInit(data.next.container)
-                // const cartItems = getCartItems()
-                // console.log('cartItems:', cartItems)
+                if (categories.includes(data.next.namespace)) {
+                    alternateCategoryItems(data.next.container)
+                    setTimeout(() => {
+                        categoryPageInit(data.next.container)
+                    }, 5000);
+                } else if (data.next.namespace === 'products') {
+                    initProductPage(data.next.container)
+                }
 
-                // const navCartIconsCount = document.querySelector('#nav-cart-items-count');
-                // applyAnimationClass(navCartIconsCount, 'pop-part-1')
-                // const navCartIconsCount = document.querySelector('#nav-cart-items-count');
-                // if (navCartIconsCount.innerHTML === '0') {
-                //     addCartItemsCount();
-                //     showCartCountIcon();
-                //     enableCheckoutBtn();
-                // } else {
-                //     applyAnimationClass(navCartIconsCount, 'pop-part-1')
-                //     setTimeout(() => {
-                //         addCartItemsCount()  
-                //     }, 250);
-                // }
+                enableCheckoutBtn()
+                setTimeout(() => {
+                    cartOverlayInit(data.next.container)
+                    cartQtyIconInit(data.next.container)
+                }, 3000);
+                
             },
         // {
         //     name: 'page-fade-transition',

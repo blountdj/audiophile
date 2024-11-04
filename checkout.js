@@ -1,33 +1,32 @@
 
 // E-MONEY TOGGLE
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the radio button element
+function toggleEmoneyDisplay() {
+    console.log('toggleEmoneyDisplay')
+
+    console.log('eMoneyRadioButton:', eMoneyRadioButton)
+
+    // Get all elements with the class 'form-input-wrapper is-emoney'
+    const emoneyElements = document.querySelectorAll('.form-input-wrapper.is-emoney');
+    const cashOnDeliveryElement = document.getElementById('cash-on-delivery');
+    
+    // Determine the display style based on the radio button's checked state
+    const eMoneyDisplayStyle = eMoneyInput.checked ? 'block' : 'none';
+    const cashOnDeliveryDisplayStyle = cashOnDeliveryRadioButton.checked ? 'flex' : 'none';
+    
+    // Set the display style for each element
+    emoneyElements.forEach(element => {
+        element.style.display = eMoneyDisplayStyle;
+    });
+    
+    cashOnDeliveryElement.style.display = cashOnDeliveryDisplayStyle;
+}
+
+export function checkoutInit(container) {
     const eMoneyRadioButton = document.getElementById('e-money-radio');
     const cashOnDeliveryRadioButton = document.getElementById('cash-on-delivery-radio');
     const eMoneyInput = document.getElementById('emoney');
 
-    
-    // Function to toggle display based on radio button state
-    function toggleEmoneyDisplay() {
-        console.log('toggleEmoneyDisplay')
-
-        console.log('eMoneyRadioButton:', eMoneyRadioButton)
-
-        // Get all elements with the class 'form-input-wrapper is-emoney'
-        const emoneyElements = document.querySelectorAll('.form-input-wrapper.is-emoney');
-        const cashOnDeliveryElement = document.getElementById('cash-on-delivery');
-        
-        // Determine the display style based on the radio button's checked state
-        const eMoneyDisplayStyle = eMoneyInput.checked ? 'block' : 'none';
-        const cashOnDeliveryDisplayStyle = cashOnDeliveryRadioButton.checked ? 'flex' : 'none';
-        
-        // Set the display style for each element
-        emoneyElements.forEach(element => {
-            element.style.display = eMoneyDisplayStyle;
-        });
-        
-        cashOnDeliveryElement.style.display = cashOnDeliveryDisplayStyle;
-    }
+   
     
     // Add event listener to the radio button
     eMoneyRadioButton.addEventListener('change', toggleEmoneyDisplay);
@@ -35,11 +34,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial check to set the correct display state on page load
     toggleEmoneyDisplay();
-});
+    checkoutDisplayCartItems()
+}
+
+
+
 
 // GENERAL CHECKOUT DISPLAY & FUNCTIONALITY
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded');
+// document.addEventListener('DOMContentLoaded', function() {
+//     console.log('DOM loaded');
     const checkoutTotalTextElem = document.querySelector('#Total');
     
     const checkoutProductImages = {
@@ -97,152 +100,151 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to display cart items
-    function checkoutDisplayCartItems() {
+function checkoutDisplayCartItems() {
 
-        // let checkoutCartItems = checkoutGetCartItems();
-        let checkoutCartItems = getCartItems();
-        // console.log('checkoutCartItems:', checkoutCartItems);
-        let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
+    // let checkoutCartItems = checkoutGetCartItems();
+    let checkoutCartItems = getCartItems();
+    // console.log('checkoutCartItems:', checkoutCartItems);
+    let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
 
-        // Clear the current content
-        checkoutCartItemsContainer.innerHTML = '';
+    // Clear the current content
+    checkoutCartItemsContainer.innerHTML = '';
 
-        if (checkoutCartItems.length === 0) {
-            // console.log("checkoutCartItems.length === 0")
-            checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-            checkoutTotalTextElem.textContent = `$ 0`;
-            return;
-        }
-
-        // Create a dictionary to aggregate items by name
-        checkoutItemDictionary = getItemDictionary(checkoutCartItems)
-        let checkoutTotal = 0;     
-   
-        // Iterate over itemDictionary to display each unique item
-        let hiddenProductText = '';
-        let index = 0;
-        for (let key in checkoutItemDictionary) {
-            index++;
-            if (checkoutItemDictionary.hasOwnProperty(key)) {
-                let checkoutItem = checkoutItemDictionary[key];
-                checkoutTotal += checkoutItem.subtotal;
-                let checkoutImgUrl = checkoutProductImages[checkoutItem.name]
-                hiddenProductText += `${index}) ${checkoutItem.quantity}x ${checkoutItem.name} = $${checkoutItem.price * checkoutItem.quantity} - `;
-                //console.log('imgUrl:', imgUrl);
-                //console.log('subtotal:', item.subtotal);
-                let checkoutItemElement = document.createElement('div');
-                checkoutItemElement.classList.add('cart-item');
-                checkoutItemElement.innerHTML = `
-                    <div class="checkout-cart-item">
-                    		<img class="checkout-cart-item-img" src="${checkoutImgUrl}">
-                        <div class="checkout-cart-item-text-wrapper">
-                            <p class="checkout-summary-item-heading">${checkoutItem.cartName}</p>
-                            <p class="checkout-summary-item-price">$ ${checkoutItem.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                        </div>
-                        <p class="checkout-summary-item-qty">x${checkoutItem.quantity}</p>
-                    </div>
-                `;
-                checkoutCartItemsContainer.appendChild(checkoutItemElement);
-            }
-        }
-
-        // UPDATE HIDDEN PRODUCT INPUT
-        const productInput = document.getElementById('Products');
-        productInput.readOnly = true;
-        productInput.value = hiddenProductText.slice(0, -2);
-
-        // Display the totals
-        const checkoutTotalTextElemHidden = document.querySelector('#Total-Hidden');
-        checkoutTotalTextElemHidden.readOnly = true;
-        const checkoutShippingTextElem = document.querySelector('#Shipping');
-        const checkoutShippingTextElemHidden = document.querySelector('#Shipping-Hidden');
-        const checkoutVatTextElem = document.querySelector('#VAT');
-        const checkoutVatTextElemHidden = document.querySelector('#VAT-Hidden');
-        const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
-        const checkoutGrandTotalTextElemHidden = document.querySelector('#Grand-Total-Hidden');
-        // checkoutGrandTotalTextElem.readOnly = true;
-        const readOnlyElems = [
-            checkoutGrandTotalTextElem, 
-            checkoutTotalTextElemHidden, 
-            checkoutShippingTextElem, 
-            checkoutShippingTextElemHidden, 
-            checkoutVatTextElem, 
-            checkoutGrandTotalTextElem,
-            checkoutTotalTextElem,
-            checkoutTotalTextElemHidden
-        ]
-        setElementsToReadOnly(readOnlyElems)
-        
-        // OVERLAY ELEMENTS
-        const checkoutOverlayGrandTotalText = document.querySelector('#overlay-grand-total');
-        const checkoutOverlayOtherItemsCountText = document.querySelector('#overlay-other-items-count');
-        const checkoutOverlayOtherItemsPlural = document.querySelector('#overlay-other-items-plural');
-        const checkoutOverlayOtherItemImage = document.querySelector('#overlay-cart-item-img');
-        const checkoutOverlayBottomWrapper = document.querySelector('#overlay-items-bottom-wrapper');
-        const checkoutOverlayItemName = document.querySelector('#overlay-item-name');
-        const checkoutOverlayItemPrice = document.querySelector('#overlay-item-price');
-        const checkoutOverlayItemQty = document.querySelector('#overlay-item-qty');
-        
-        // CALCULATED VALUES
-        const checkoutGrandTotal = (checkoutTotal + 50)    
-        const checkoutVatTotal = checkoutGrandTotal * 0.20
-
-        // console.log('checkoutGrandTotal:', checkoutGrandTotal)
-
-		// UPDATE SUMMARY SECTION
-        checkoutTotalTextElem.value = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        checkoutTotalTextElemHidden.value = checkoutTotal;
-
-        checkoutShippingTextElem.value = `$ 50.00`;
-        checkoutShippingTextElemHidden.value = 50.00;
-
-        checkoutVatTextElem.value = `$ ${checkoutVatTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        checkoutVatTextElemHidden.value = checkoutVatTotal;
-
-        checkoutGrandTotalTextElem.value = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        checkoutGrandTotalTextElemHidden.value = checkoutGrandTotal;
-        // checkoutGrandTotalTextElem.value = checkoutGrandTotal;
-        resizeInput.call(checkoutGrandTotalTextElem);
-
-        // UPDATE OVERLAY
-        const checkoutFirstKey = Object.keys(checkoutItemDictionary)[0];
-        const checkoutfirstValue = checkoutItemDictionary[checkoutFirstKey];
-        
-        checkoutOverlayItemName.textContent = `${checkoutfirstValue.cartName}`;
-        checkoutOverlayItemPrice.textContent = `$ ${checkoutfirstValue.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        
-        checkoutOverlayItemQty.textContent = `x${checkoutfirstValue.quantity}`;
-        checkoutOverlayGrandTotalText.textContent = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        
-        const checkoutDictionaryLength = Object.keys(checkoutItemDictionary).length;
-        // console.log('checkoutDictionaryLength:', checkoutDictionaryLength)
-        
-        let checkoutOverlayImgUrl = checkoutProductImages[checkoutfirstValue.name]
-        checkoutOverlayOtherItemImage.src = checkoutOverlayImgUrl;
-        
-        if (checkoutDictionaryLength > 1) {
-            // console.log('dictionaryLength > 1')
-        	checkoutOverlayBottomWrapper.style.display = 'flex';
-            checkoutOverlayOtherItemsCountText.textContent = `${checkoutDictionaryLength - 1}`;
-            let checkoutOverlayOtherItemsPluralDisplay = checkoutDictionaryLength === 2 ? `` : `(s)`;
-            checkoutOverlayOtherItemsPlural.textContent = `${checkoutOverlayOtherItemsPluralDisplay}`;
-        }
-        
-        const orderConfirmationGoHomeButton = document.getElementById('order-confirmation-home');
-        orderConfirmationGoHomeButton.addEventListener('click', function() {
-      	    // checkoutOverlayElem.style.display = 'none';  
-            clearCart()
-        }) 
+    if (checkoutCartItems.length === 0) {
+        // console.log("checkoutCartItems.length === 0")
+        checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        checkoutTotalTextElem.textContent = `$ 0`;
+        return;
     }
 
-    // Display cart items on page load
-    checkoutDisplayCartItems();
-});
+    // Create a dictionary to aggregate items by name
+    checkoutItemDictionary = getItemDictionary(checkoutCartItems)
+    let checkoutTotal = 0;     
+
+    // Iterate over itemDictionary to display each unique item
+    let hiddenProductText = '';
+    let index = 0;
+    for (let key in checkoutItemDictionary) {
+        index++;
+        if (checkoutItemDictionary.hasOwnProperty(key)) {
+            let checkoutItem = checkoutItemDictionary[key];
+            checkoutTotal += checkoutItem.subtotal;
+            let checkoutImgUrl = checkoutProductImages[checkoutItem.name]
+            hiddenProductText += `${index}) ${checkoutItem.quantity}x ${checkoutItem.name} = $${checkoutItem.price * checkoutItem.quantity} - `;
+            //console.log('imgUrl:', imgUrl);
+            //console.log('subtotal:', item.subtotal);
+            let checkoutItemElement = document.createElement('div');
+            checkoutItemElement.classList.add('cart-item');
+            checkoutItemElement.innerHTML = `
+                <div class="checkout-cart-item">
+                        <img class="checkout-cart-item-img" src="${checkoutImgUrl}">
+                    <div class="checkout-cart-item-text-wrapper">
+                        <p class="checkout-summary-item-heading">${checkoutItem.cartName}</p>
+                        <p class="checkout-summary-item-price">$ ${checkoutItem.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </div>
+                    <p class="checkout-summary-item-qty">x${checkoutItem.quantity}</p>
+                </div>
+            `;
+            checkoutCartItemsContainer.appendChild(checkoutItemElement);
+        }
+    }
+
+    // UPDATE HIDDEN PRODUCT INPUT
+    const productInput = document.getElementById('Products');
+    productInput.readOnly = true;
+    productInput.value = hiddenProductText.slice(0, -2);
+
+    // Display the totals
+    const checkoutTotalTextElemHidden = document.querySelector('#Total-Hidden');
+    checkoutTotalTextElemHidden.readOnly = true;
+    const checkoutShippingTextElem = document.querySelector('#Shipping');
+    const checkoutShippingTextElemHidden = document.querySelector('#Shipping-Hidden');
+    const checkoutVatTextElem = document.querySelector('#VAT');
+    const checkoutVatTextElemHidden = document.querySelector('#VAT-Hidden');
+    const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
+    const checkoutGrandTotalTextElemHidden = document.querySelector('#Grand-Total-Hidden');
+    // checkoutGrandTotalTextElem.readOnly = true;
+    const readOnlyElems = [
+        checkoutGrandTotalTextElem, 
+        checkoutTotalTextElemHidden, 
+        checkoutShippingTextElem, 
+        checkoutShippingTextElemHidden, 
+        checkoutVatTextElem, 
+        checkoutGrandTotalTextElem,
+        checkoutTotalTextElem,
+        checkoutTotalTextElemHidden
+    ]
+    setElementsToReadOnly(readOnlyElems)
+    
+    // OVERLAY ELEMENTS
+    const checkoutOverlayGrandTotalText = document.querySelector('#overlay-grand-total');
+    const checkoutOverlayOtherItemsCountText = document.querySelector('#overlay-other-items-count');
+    const checkoutOverlayOtherItemsPlural = document.querySelector('#overlay-other-items-plural');
+    const checkoutOverlayOtherItemImage = document.querySelector('#overlay-cart-item-img');
+    const checkoutOverlayBottomWrapper = document.querySelector('#overlay-items-bottom-wrapper');
+    const checkoutOverlayItemName = document.querySelector('#overlay-item-name');
+    const checkoutOverlayItemPrice = document.querySelector('#overlay-item-price');
+    const checkoutOverlayItemQty = document.querySelector('#overlay-item-qty');
+    
+    // CALCULATED VALUES
+    const checkoutGrandTotal = (checkoutTotal + 50)    
+    const checkoutVatTotal = checkoutGrandTotal * 0.20
+
+    // console.log('checkoutGrandTotal:', checkoutGrandTotal)
+
+    // UPDATE SUMMARY SECTION
+    checkoutTotalTextElem.value = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    checkoutTotalTextElemHidden.value = checkoutTotal;
+
+    checkoutShippingTextElem.value = `$ 50.00`;
+    checkoutShippingTextElemHidden.value = 50.00;
+
+    checkoutVatTextElem.value = `$ ${checkoutVatTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    checkoutVatTextElemHidden.value = checkoutVatTotal;
+
+    checkoutGrandTotalTextElem.value = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    checkoutGrandTotalTextElemHidden.value = checkoutGrandTotal;
+    // checkoutGrandTotalTextElem.value = checkoutGrandTotal;
+    resizeInput.call(checkoutGrandTotalTextElem);
+
+    // UPDATE OVERLAY
+    const checkoutFirstKey = Object.keys(checkoutItemDictionary)[0];
+    const checkoutfirstValue = checkoutItemDictionary[checkoutFirstKey];
+    
+    checkoutOverlayItemName.textContent = `${checkoutfirstValue.cartName}`;
+    checkoutOverlayItemPrice.textContent = `$ ${checkoutfirstValue.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    
+    checkoutOverlayItemQty.textContent = `x${checkoutfirstValue.quantity}`;
+    checkoutOverlayGrandTotalText.textContent = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    
+    const checkoutDictionaryLength = Object.keys(checkoutItemDictionary).length;
+    // console.log('checkoutDictionaryLength:', checkoutDictionaryLength)
+    
+    let checkoutOverlayImgUrl = checkoutProductImages[checkoutfirstValue.name]
+    checkoutOverlayOtherItemImage.src = checkoutOverlayImgUrl;
+    
+    if (checkoutDictionaryLength > 1) {
+        // console.log('dictionaryLength > 1')
+        checkoutOverlayBottomWrapper.style.display = 'flex';
+        checkoutOverlayOtherItemsCountText.textContent = `${checkoutDictionaryLength - 1}`;
+        let checkoutOverlayOtherItemsPluralDisplay = checkoutDictionaryLength === 2 ? `` : `(s)`;
+        checkoutOverlayOtherItemsPlural.textContent = `${checkoutOverlayOtherItemsPluralDisplay}`;
+    }
+    
+    const orderConfirmationGoHomeButton = document.getElementById('order-confirmation-home');
+    orderConfirmationGoHomeButton.addEventListener('click', function() {
+        // checkoutOverlayElem.style.display = 'none';  
+        clearCart()
+    }) 
+}
+
+
+// });
 
 
 
 // SUBMIT ORDER & FORM CHECKING
-document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
 
     const nameInputWrapperElem = document.getElementById('name-input-wrapper');
     const emailInputWrapperElem = document.getElementById('email-input-wrapper');
@@ -253,7 +255,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const countryInputWrapperElem = document.getElementById('country-input-wrapper');   
     const successConfirmationNameElem = document.getElementById('confirmation-text-name');
        
-
 
     function validateEmail(email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -426,4 +427,4 @@ document.addEventListener('DOMContentLoaded', function() {
               $(this).parents('form').submit()      
         }
       }); 
-})
+// })

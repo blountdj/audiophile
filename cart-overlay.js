@@ -1,6 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('cart-overlay.js - DOM LOADED (VSCODE)')
-    
+// document.addEventListener('DOMContentLoaded', function() {
+//   console.log('cart-overlay.js - DOM LOADED (VSCODE)')
+
+import { disableCheckoutBtn } from "./common.js";
+import { enableCheckoutBtn } from "./common.js";
+import { addCartItemsCount, minusCartItemsCount } from "./cart-quantity-icon.js";
+import { updateCartCountIcon } from "./cart-quantity-icon.js";
+
   // IMAGES
   const productImages = {
       "XX59 headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7babf36e28a4099e1_image-xx59-headphones.webp",
@@ -11,25 +16,18 @@ document.addEventListener('DOMContentLoaded', function() {
       "ZX9 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a82554a6dd42ae0c7b_image-zx9-speaker.webp"
   };
     
-  // Get the elements
-  const cartIcon = document.getElementById('nav-cart-icon');
-  const overlay = document.getElementById('cart-overlay');
-  const removeAllLink = document.querySelector('.remove-all-link');   
-  const overlayCloseBtn = document.getElementById('overlay-close-btn');
-  const cartQtyText = document.querySelector('#cart-qty');   
-  const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
-  const totalText = document.querySelector('#total');  
-  let cartItemsContainer = document.querySelector('.cart-items');
-  const goToCheckoutBtn = document.querySelector('#go-to-checkout-btn') 
-  const cartSummaryBlock = document.querySelector('#cart-summary-block')
-
-  function goToCheckoutBtnClick() {
+  function goToCheckoutBtnClick(container) {
+    const overlay = container.querySelector('#cart-overlay');
     const displayStyle = overlay.style.display === 'none' ? 'flex' : 'none';
     overlay.style.display = displayStyle;
   }
 
-  function toggleOverlayDisplay(event) {
-    // console.log('toggleOverlayDisplay')
+  function toggleOverlayDisplay(event, container) {
+    console.log('toggleOverlayDisplay')
+
+    const overlay = document.querySelector('#cart-overlay');
+    const cartSummaryBlock = document.querySelector('#cart-summary-block')
+
     const buttonWrapper = event.target.closest('[data-toggle="close-cart-overlay"]');
     if (buttonWrapper) {
       if (overlay.classList.contains('is-closed')) {
@@ -38,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
           cartSummaryBlock.classList.remove('is-closed');
         }, 0);
         overlay.style.display = 'flex'
-        cartDisplayCartItems()
+        cartDisplayCartItems(container)
       } else {
         overlay.classList.add('is-closed');
         cartSummaryBlock.classList.add('is-closed');
@@ -51,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
    
-  function cartDisplayCartItems(cartItems = null) {
+  function cartDisplayCartItems(container, cartItems = null) {
 
     if (!cartItems) {
       cartItems = getCartItems();
@@ -59,18 +57,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let total = 0;
     let cartTotalQty = 0;
+    let cartItemsContainer = document.querySelector('.cart-items');
+    const cartQtyText = document.querySelector('#cart-qty');  
+    const totalText = document.querySelector('#total');  
 
     // console.log('cartItems.length:', cartItems.length)
     if (cartItems.length === 0) {
       cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
       totalText.textContent = `$ 0`;
-      disableCheckoutBtn();
+      disableCheckoutBtn(container);
       return;
     } else {
       cartItemsContainer.innerHTML = '';
     }
 			  
-    itemDictionary = getItemDictionary(cartItems)
+    const itemDictionary = getItemDictionary(cartItems)
     for (let key in itemDictionary) {
       if (itemDictionary.hasOwnProperty(key)) {
         let item = itemDictionary[key];
@@ -115,28 +116,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const cartDeleteBtns = document.querySelectorAll('.cart-bin-icon-wrapper');
     cartDeleteBtns.forEach(deleteBtn => {
-      deleteBtn.addEventListener('click', removeItemFromCart);
+      deleteBtn.addEventListener('click', (e) => removeItemFromCart(e, container));
     });
 
     const pathname = window.location.pathname;
     const currentPage = pathname.substring(pathname.lastIndexOf('/') + 1);
     if (currentPage === 'checkout') {
-      checkoutRemoveCartItems();
+      checkoutRemoveCartItems(container);
     }
   }
   
-  function checkoutRemoveCartItems() {
+  function checkoutRemoveCartItems(container) {
 
-    let checkoutCartItemsContainer = document.querySelector('.checkout-cart-items');
-    const checkoutTotalTextElem = document.querySelector('#Total');
+    
+    let checkoutCartItemsContainer = container.querySelector('.checkout-cart-items');
+    const checkoutTotalTextElem = container.querySelector('#Total');
 
     checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
     checkoutTotalTextElem.textContent = `$ 0`;
 
     // Display the totals
-    const checkoutShippingTextElem = document.querySelector('#Shipping');
-    const checkoutVatTextElem = document.querySelector('#VAT');
-    const checkoutGrandTotalTextElem = document.querySelector('#Grand-Total');
+    const checkoutShippingTextElem = container.querySelector('#Shipping');
+    const checkoutVatTextElem = container.querySelector('#VAT');
+    const checkoutGrandTotalTextElem = container.querySelector('#Grand-Total');
 
     // UPDATE SUMMARY SECTION
     checkoutTotalTextElem.textContent = `$ 0`;
@@ -144,32 +146,32 @@ document.addEventListener('DOMContentLoaded', function() {
     checkoutVatTextElem.textContent = `$ 0`;
     checkoutGrandTotalTextElem.textContent = `$ 0`;
   
-    const orderConfirmationGoHomeButton = document.getElementById('order-confirmation-home');
+    const orderConfirmationGoHomeButton = container.querySelector('#order-confirmation-home');
     orderConfirmationGoHomeButton.addEventListener('click', function() {
         checkoutOverlayElem.style.display = 'none';  
-        clearCart()
+        clearCart(container)
     })
   }  
 
    
-  function cartHandleQtyChangeClick(event) {
+  function cartHandleQtyChangeClick(event, container) {
    	// console.log('cartHandleQtyChangeClick')
     let cartItems = getCartItems();
     let cartItemsQty = getCartItemsQty(cartItems)
- 		itemDictionary = getItemDictionary(cartItems)
-    
+ 		const itemDictionary = getItemDictionary(cartItems)
+    navCartQtyCountElem
 		const button = event.target;
     const name = button.dataset.name;    
-    
+    const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
     if (event.target.classList.contains('is-plus')) {
       itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) + 1
       localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
       cartItems = getCartItems();
-      cartDisplayCartItems(cartItems)
+      cartDisplayCartItems(container, cartItems)
   
       cartItemsQtyUpdated = cartItemsQty + 1;
       if (cartItemsQtyUpdated === 1) {
-        enableCheckoutBtn();
+        enableCheckoutBtn(container);
         showCartCountIcon()
         addCartItemsCount() 
       } else {
@@ -186,12 +188,12 @@ document.addEventListener('DOMContentLoaded', function() {
       	itemDictionary[name].quantity = parseInt(itemDictionary[name].quantity) - 1   
         localStorage.setItem('cart', JSON.stringify(Object.values(itemDictionary)));
         cartItems = getCartItems();
-        cartDisplayCartItems(cartItems)
+        cartDisplayCartItems(container, cartItems)
     
         cartItemsQtyUpdated = cartItemsQty - 1;
 
         if (cartItemsQtyUpdated === 0) {
-          disableCheckoutBtn();
+          disableCheckoutBtn(container);
           applyAnimationClass(navCartQtyCountElem, 'pop-to-nothing')
           setTimeout(() => {
             updateCartCountIcon(0);
@@ -220,24 +222,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function clearCart() {
+  function clearCart(container) {
    	localStorage.removeItem('cart');
+    const navCartQtyCountElem = container.querySelector('#nav-cart-items-count');
+    const cartQtyText = container.querySelector('#cart-qty');  
+    
     applyAnimationClass(navCartQtyCountElem, 'pop-to-nothing')
     setTimeout(() => {
       updateCartCountIcon(0);
-  }, 400);
-    cartDisplayCartItems();
+    }, 400);
+    cartDisplayCartItems(container);
     cartQtyText.textContent = ``;
-    disableCheckoutBtn()
+    disableCheckoutBtn(container)
   }
   
 
   // CART DELETE BUTTONS
-  function removeItemFromCart(event) {
+  function removeItemFromCart(event, container) {
     const button = event.target.closest('.cart-bin-icon-wrapper');
     const itemId = button.dataset.id; // Access the data-id attribute
-
+    const navCartQtyCountElem = container.querySelector('#nav-cart-items-count');
     const itemToDelete = event.target.closest('.cart-item'); 
+    const cartQtyText = document.querySelector('#cart-qty');  
     itemToDelete.classList.add('to-delete');
 
     // // Your logic to remove the item from the cart using itemId
@@ -248,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cartTotalQty === 0) {
       updateCartCountIcon(cartTotalQty)
     } else {
+      
       applyAnimationClass(navCartQtyCountElem, 'pop-part-1')
       setTimeout(() => {
         updateCartCountIcon(cartTotalQty)
@@ -257,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     setTimeout(() => {
-      cartDisplayCartItems(cartItems); 
+      cartDisplayCartItems(container, cartItems); 
       cartQtyText.textContent = `(${cartTotalQty})`
       // Update the cart count icon
 
@@ -265,16 +272,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
   }
 
-  function init() {
-    cartIcon.addEventListener('click', toggleOverlayDisplay);
-    removeAllLink.addEventListener('click', clearCart); 
-    overlayCloseBtn.addEventListener('click', toggleOverlayDisplay); 
-    goToCheckoutBtn.addEventListener('click', goToCheckoutBtnClick);
+  export function cartOverlayInit(container) {
+    console.log('cartOverlayInit')
 
-    cartDisplayCartItems();
-    overlay.style.display = 'none'
+    const cartIcon = container.querySelector('#nav-cart-icon');
+    const overlay = container.querySelector('#cart-overlay');
+    const removeAllLink = document.querySelector('.remove-all-link');   
+    console.log('removeAllLink:', removeAllLink)
+    const overlayCloseBtn = container.querySelector('#overlay-close-btn');
+     
+    const goToCheckoutBtn = container.querySelector('#go-to-checkout-btn') 
+    
+
+    cartIcon.addEventListener('click', (e) => toggleOverlayDisplay(e, container));
+    removeAllLink.addEventListener('click', (e) => clearCart(container)); 
+    // overlayCloseBtn.addEventListener('click', (e) => toggleOverlayDisplay(e, container)); 
+    // goToCheckoutBtn.addEventListener('click', goToCheckoutBtnClick);
+
+    // cartDisplayCartItems(container);
+    // overlay.style.display = 'none'
   }
 
-  init()
-  
-});
+
