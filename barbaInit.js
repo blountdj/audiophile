@@ -2,29 +2,28 @@ console.log('barbaInit.js loaded')
 
 import { CONFIG } from "./config.js";
 import { 
-    // textSplit,
     removeScriptsFromBody,
     addScriptsToBody,
     addFilesCssToBody,
     removeCssFilesFromBody,
     createCSSFileLink,
-    // applyAnimationClass,
-    // getCartItems
-    // addScriptsToBodyNotModule
 } from "./utilities.js";
-
 
 import { cartQtyIconInit } from "./cart-quantity-icon.js";
 import { cartOverlayInit } from "./cart-overlay.js";
-import { homeLoadController, homeInit, getHomeElement } from "./homeAnimations.js";
+import { homeIntroAnimation, homeAnimationsInit } from "./homeAnimations.js";
+import { navbarInit } from "./navbar.js";
 import { checkoutInit } from "./checkout.js"
+import { checkoutAnimationsInit, checkoutAnimations } from "./checkoutAnimations.js";
+
 import { 
-    initTransition, 
+    // initTransition, 
+    transitionInit,
     leaveTransition, 
 } from "./transitionAnimation.js";
 
 import { initProductPage } from "./product-pages.js";
-import { productsHeroEnter } from "./productAnimations.js";
+import { productsHeroEnter, initProductAnimations } from "./productAnimations.js";
 
 import { 
    navBarFadeIn,
@@ -33,63 +32,13 @@ import {
    heroIntroLoad
 } from "./animations.js";
 
+import { homeInit } from "./home.js"
 import { categoryPageInit, alternateCategoryItems } from "./category-pages.js";
 
 
-import { categoryAnimation } from "./categoriesAnimations.js";
+import { categoryAnimation, initCategoriesAnimations } from "./categoriesAnimations.js";
 
 const categories = ['headphones', 'earphones', 'speakers']
-
-
-// const pageIdentifierTextEnter = async (data) => {
-//     // console.log('\n\n### pageIdentifierTextEnter')
-
-//     let pageIdentifierTextElem = data.next.container.querySelector('.page-identifer-text')
-//     // console.log('pageIdentifierTextElem - barba.hooks.enter:', pageIdentifierTextElem)
-
-//     textSplit(pageIdentifierTextElem)
-
-//     return new Promise((resolve) => {
-//         gsap.set('.page-identifer-text', {opacity: 1})
-//         gsap.set('.char', {opacity: 0})
-//         gsap.to('.char', {
-//             opacity: 1,
-//             duration: 1.575,
-//             stagger: {
-//                 from: "random",
-//                 each: 0.075,
-//             },
-//             ease: "power2.out",
-//             onComplete: () => {
-//                 resolve()
-//             }
-//         })
-//     })
-// }
-
-// const pageIdentifierTextLeave = (data) => {
-//     // console.log('pageIdentifierTextLeave')
-//     // console.log('data.next.namespace:', data.next.namespace)
-//     let pageIdentifierTextElem = document.querySelector('.page-identifer-text')
-//     // console.log('pageIdentifierTextElem0:', pageIdentifierTextElem)
-
-//     return new Promise((resolve) => {
-//         // gsap.set(pageIdentifierTextSplit.chars, { opacity: 0 });
-//         gsap.to('.char', {
-//             opacity: 0,
-//             duration: 1.575,
-//             stagger: {
-//                 from: "random",
-//                 each: 0.075,
-//             },
-//             ease: "power2.out",
-//             onComplete: () => {
-//                 resolve()
-//                 pageIdentifierTextElem.textContent = data.next.namespace;
-//             }
-//         })
-//     })
-// }
 
 const animationFadeInEnter = ((data) => {
     // console.log('------animationFadeInEnter')
@@ -134,28 +83,41 @@ const animationFadeOutLeave = (data) => {
 
 
 barba.hooks.beforeEnter((data) => {
+    // console.log('barba.hooks.beforeEnter')
     window.scrollTo(0, 0); // Scroll to the top of the page
+    if (data.next.namespace === 'home') {
+        homeAnimationsInit(data.next.container, 'beforeEnter 86')
+    } else if (categories.includes(data.next.namespace)) {
+        initCategoriesAnimations(data.next.container)
+    } else if (data.next.namespace === 'products') {
+        initProductAnimations(data.next.container)
+    } else if (data.next.namespace === 'checkout') {
+        checkoutAnimationsInit(data.next.container)
+    } 
 });
 
-barba.hooks.once((data) => {
-    // console.log('barba.hooks.once')
-    // console.log('data:', data)
-    // console.log('data.next.namespace:', data.next.namespace)
+barba.hooks.beforeLeave((data) => {
+    console.log('barba.hooks.beforeLeave')
+    transitionInit(data.next.container, data.next.namespace, 'beforeLeave 91')
+})
 
-    window.scrollTo(0, 0);
+
+barba.hooks.once((data) => {
+    console.log('barba.hooks.once')
+
+    transitionInit(data.next.container, data.next.namespace, 'once 101')
 
     const navBar = data.next.container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper')
     gsap.set(navBar, { opacity: 0 })
+    
 
     if (data.next.namespace === 'home') {
 
-        // console.log('ONCE- HOME')
+        console.log('ONCE- HOME')
         const introOverlay = document.querySelector('.intro-overlay')
         const barOverlay = document.querySelector('.bar-overlay')
         const introLogo = document.querySelector('.intro-logo')
         const introBars = document.querySelectorAll('.bar')
-        homeLoadController(data.next.container, false)
-        // homeInit(homeElem)
 
         const tl = gsap.timeline()
         tl.to(introBars, {
@@ -187,7 +149,7 @@ barba.hooks.once((data) => {
         tl.set(barOverlay, { autoAlpha: 0 });
 
         setTimeout(() => {
-            homeLoadController(data.next.container, true)
+            homeIntroAnimation(data.next.container, 'once 136')
         }, 4000);
 
 
@@ -195,54 +157,60 @@ barba.hooks.once((data) => {
         setTimeout(() => {
             navBarFadeIn(navBar)
         }, 525)
-        heroIntroLoad(data.next.container, '.category-hero', 0.75);
+        categoryAnimation(data.next.container, '.category-hero', 0.75);
     } else if (data.next.namespace === 'products') {
         setTimeout(() => {
             navBarFadeIn(navBar)
         }, 525)
+        productsHeroEnter(data.next.container)
     } else if (data.next.namespace === 'checkout') {
-        // checkoutInit(data.next.container)
-        setTimeout(() => {
-            navBarFadeIn(navBar)
-        }, 525)
+        checkoutAnimations(data.next.container)
     } else {
         setTimeout(() => {
             navBarFadeIn(navBar)
         }, 525)
     }
-
 });
 
 
 const homeAnimationsJsFileUrls = [`http://127.0.0.1:5500/homeAnimations.js`, 'https://cdn.jsdelivr.net/gh/blountdj/audiophile@v2/home.js']
 const categoriesAnimationsJsFileUrl = `http://127.0.0.1:5500/categoriesAnimations.js`
 const productsAnimationsJsFileUrl = `http://127.0.0.1:5500/productsAnimations.js`
-const checkoutAnimationsJsFileUrl = `http://127.0.0.1:5500/checkoutAnimations.js`
 // const gsapTextPluginUrl = `https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/TextPlugin.min.js`
 // const pageSpecificScriptUrl = `https://cdn.jsdelivr.net/gh/blountdj/arch-studio@v1/home.js`
 const homeCssFileUrl = `http://127.0.0.1:5500/home.css`
+const checkoutCssFileUrl = `http://127.0.0.1:5500/checkout.css`
 
 barba.hooks.afterEnter((data) => {
-    // console.log('barba.hooks.afterEnter')
+    console.log('barba.hooks.afterEnter')
     const currentPageId = data.current.namespace;
     const nextPageId = data.next.namespace; // Assuming your container has an ID that matches the page
     // console.log('currentPageId:', currentPageId)
+    navbarInit(data.next.container)
     
     if (nextPageId === 'home') {
         addScriptsToBody(homeAnimationsJsFileUrls)
         addFilesCssToBody([homeCssFileUrl])
+        homeInit(data.next.container)
+    } else if (nextPageId === 'products') {
+        initProductPage(data.next.container)
+    }  else if (nextPageId === 'checkout') {
+        checkoutInit(data.next.container)
     } else {
         removeScriptsFromBody(homeAnimationsJsFileUrls)
         removeCssFilesFromBody([homeCssFileUrl])
     }
 
-
     categories.some(category => nextPageId.includes(category)) && !categories.some(category => currentPageId.includes(category)) ? addScriptsToBody([categoriesAnimationsJsFileUrl]) : removeScriptsFromBody([categoriesAnimationsJsFileUrl])
-    nextPageId === 'products' && !currentPageId === 'products' ? addScriptsToBody([productsAnimationsJsFileUrl]) : removeScriptsFromBody([productsAnimationsJsFileUrl])
-    nextPageId === 'checkout' ? addScriptsToBody([checkoutAnimationsJsFileUrl]) : removeScriptsFromBody([checkoutAnimationsJsFileUrl])
-    nextPageId !== 'home' && currentPageId === 'home' ? removeScriptsFromBody([gsapTextPluginUrl]) : ''
-});
+    nextPageId === 'products' && !currentPageId === 'products' ? addScriptsToBody([productsAnimationsJsFileUrl]) : removeScriptsFromBody([productsAnimationsJsFileUrl])    
+    // nextPageId !== 'home' && currentPageId === 'home' ? removeScriptsFromBody([gsapTextPluginUrl]) : ''
+    nextPageId === 'checkout' ? addFilesCssToBody([checkoutCssFileUrl]) : removeCssFilesFromBody([checkoutCssFileUrl])
 
+    setTimeout(() => {
+        cartOverlayInit(data.next.container)
+        cartQtyIconInit(data.next.container)
+    }, 3000);
+});
 
 barba.init({
     debug: CONFIG.barbaDebug,
@@ -264,86 +232,67 @@ barba.init({
               }
             },
             async leave(data) {
-                // console.log('\nLEAVE -', data.current.namespace)
+                console.log('\nLEAVE -', data.current.namespace)
 
-                initTransition(data)
                 animationFadeOutLeave(data);
                 fadeOutNavA(data)
-                await leaveTransition(data)
-
-                // const outroSelector = categories.includes(data.current.namespace) ? '.category-hero' : '.home-hero'
-                // await heroOutro(data.current.container, outroSelector);
-                
+                await leaveTransition(data.next.container)
             },
 
-
             async enter(data) {
-                console.log('\nENTER')
+                console.log('\nENTER: namespace:', data.next.namespace)
                 const introSelector = categories.includes(data.next.namespace) ? '.category-hero' : '.home-hero'
         
-
                 if (data.next.namespace === 'home') {
-
-                    //     /* Typing Animation */
                     setTimeout(() => {
-                            let typingAnimation = typeTextIndividual(data.next.container, 'new product');
-                            typingAnimation.play();  // Start the animation
-                        }, 3500);
-                        homeLoadController(data.next.container)
-                        // heroIntroLoad(data.next.container, introSelector)
-                        await animationFadeInEnter(data);
+                        homeIntroAnimation(data.next.container)
+                    }, 3000);
+                    setTimeout(() => {
+                        let typingAnimation = typeTextIndividual(data.next.container, 'new product');
+                        typingAnimation.play();  // Start the animation
+                    }, 3000);
+                    await animationFadeInEnter(data);
 
                 } else if (categories.includes(data.next.namespace)) {
-                    categoryAnimation(data.next.container, introSelector)
+                    setTimeout(() => {
+                        categoryAnimation(data.next.container, introSelector)
+                    }, 3000);
+                    
                     setTimeout(() => {
                         document.head.appendChild(createCSSFileLink('http://127.0.0.1:5500/category-pages.css'));
                         // btnHoverAnimation(data.next.container)
                     }, 4000);
-                }
-
-                else if (data.next.namespace === 'products') {
-
-                    productsHeroEnter(data.next.container)
+                } else if (data.next.namespace === 'products') {
+                    setTimeout(() => {
+                        productsHeroEnter(data.next.container)
+                    }, 3000);
 
                 } else if (data.next.namespace === 'checkout') {
                     checkoutInit(data.next.container) 
+                    setTimeout(() => {
+                        checkoutAnimations(data.next.container)
+                    }, 3000);
+                    
                 } else {
                     heroIntroLoad(data.next.container, introSelector)
                     await animationFadeInEnter(data);
                 }
             },
             afterEnter(data) {
-                // console.log('afterEnter')
-                cartQtyIconInit(data.next.container)
+                console.log('afterEnter')
                 if (categories.includes(data.next.namespace)) {
                     alternateCategoryItems(data.next.container)
                     setTimeout(() => {
                         categoryPageInit(data.next.container)
                     }, 5000);
-                } else if (data.next.namespace === 'products') {
-                    initProductPage(data.next.container)
-                }
+                } 
 
-                enableCheckoutBtn()
-                setTimeout(() => {
-                    cartOverlayInit(data.next.container)
-                    cartQtyIconInit(data.next.container)
-                }, 3000);
+                // setTimeout(() => {
+                //     cartOverlayInit(data.next.container)
+                //     cartQtyIconInit(data.next.container)
+                // }, 3000);
                 
             },
-        // {
-        //     name: 'page-fade-transition',
-        //     // to: { namespace: ['todo'] },
-        //     once() {},
-        //     async leave(data) {
-        //         console.log('\n\nLEAVE')
-        //         await animationFadeOutLeave(data);
-        //     },
-        //     async enter(data) {
-        //         console.log('\n\nENTER')
-        //         await animationFadeInEnter(data);
-        //     },
-        // },
         }
     ]
 });

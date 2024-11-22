@@ -61,11 +61,15 @@ const getCategoryElement = (container) => {
     }
 }
 
-export function initCategories(elem) {
+export function initCategoriesAnimations(container) {
     // return new Promise((resolve, reject) => {
 
         // console.log('initCategories')
         // console.log('elem.catTitleChars:', elem.catTitleChars)
+        new SplitType(container.querySelector('.category-h1'), {types: "words, chars"});
+        new SplitType(container.querySelector('.category-item-h2'), {types: "words, chars"});
+        
+        const elem = getCategoryElement(container)
 
         gsap.set(elem.catHero, {
             yPercent: -100
@@ -113,13 +117,8 @@ const moveToZeroYPercent = (element) => {
 }
 
 export const categoryAnimation = async (container, introSelector) => {
-
-    new SplitType(container.querySelector('.category-h1'), {types: "words, chars"});
-    new SplitType(container.querySelector('.category-item-h2'), {types: "words, chars"});
     
     const catElem = getCategoryElement(container)
-
-    await initCategories(catElem)
 
     gsap.timeline({ defaults: { ease: 'power4.inout' }})
         .add(() => navBarFadeIn(catElem.catNavBarA), 0) // Starts 0.75s after the previous animation

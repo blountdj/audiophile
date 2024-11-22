@@ -30,24 +30,28 @@ const getHeroElement = (container) => {
         btnElemBottom: container.querySelector('.btn-elem-bottom'),
 
         prodBtnText: container.querySelector('.btn-1-text'),
-        // h1: container.querySelector('.category-item-h2'),
-        // figures: document.querySelectorAll('.transition_figure'),
+
     }
 }
 
-function initHero(heroElement) {
-    return new Promise((resolve, reject) => {
+export function initProductAnimations(container) {
+    console.log('initProductAnimations')
+    new SplitType(container.querySelector('h1'), {types: "words, chars"});
+    new SplitType(container.querySelector('.product-pirce'), {types: "words, chars"});
 
-        // gsap.set([heroElement.h1, heroElement.productTextParagraph, heroElement.productpriceWrapper], {
+    // container.querySelector('.product-pirce')
+    // new SplitType(heroElement.productpriceWrapper, {types: "words, chars"});
+    
+    const heroElement = getHeroElement(container)
+
+
+    // return new Promise((resolve, reject) => {
+
         gsap.set([heroElement.productH2, heroElement.productH2Chars, heroElement.productTextParagraph,
             heroElement.prodBtnText
         ], {
             opacity: 0,
         });
-
-        // gsap.set(heroElement.addToCartBtn, {
-        //     color: '#d87d4a',
-        // });
 
         gsap.set([heroElement.btnElemTop, heroElement.btnElemBottom], {
             scaleY: 1,
@@ -56,35 +60,39 @@ function initHero(heroElement) {
         gsap.set([heroElement.productPrice], { yPercent: -285, rotate: -15 }); // 285
         gsap.set([heroElement.productPriceChars], { yPercent: -100 });
 
-        resolve();
-    });
+        gsap.set([heroElement.productImgWrapper], { opacity: 0, xPercent: -100 });
+        gsap.set([heroElement.productImgTextWrapper], { opacity: 0, xPercent: 100 });
+
+
+
+        // resolve();
+    // });
 }
 
-function heroMoveTest(heroElement) {
-    // console.log('heroMoveTest')
-    const tl = gsap.timeline({ defaults: { duration: 0.75, ease: 'power4.inout' } });
+function heroMoveTest(elem) {
+    console.log('heroMoveTest')
+    // const tl = gsap.timeline({ defaults: { duration: 0.75, ease: 'power4.inout' } });
     
     // Initial animations
-    tl.from(heroElement.productImgWrapper, { opacity: 0, xPercent: -100, duration: 0.25, ease: 'power4.inout' })
-    tl.from(heroElement.productImgTextWrapper, { opacity: 0, xPercent: 100, duration: 0.25, ease: 'power4.inout' }, '<') // '<' means at the same time as the previous animation
+    gsap.to(elem, { 
+        opacity: 1, 
+        xPercent: 1, 
+        duration: 0.75, 
+        ease: 'power4.inout' 
+    })
+    // tl.to(heroElement.productImgTextWrapper, { opacity: 1, xPercent: 100, duration: 0.25, ease: 'power4.inout' }, '<') // '<' means at the same time as the previous animation
         
 }
 
 export const productsHeroEnter = async (container) => {
-
-    new SplitType(container.querySelector('h1'), {types: "words, chars"});
-    new SplitType(container.querySelector('.product-pirce'), {types: "words, chars"});
-
-    container.querySelector('.product-pirce')
-    // new SplitType(heroElement.productpriceWrapper, {types: "words, chars"});
+    console.log('productsHeroEnter')
     
     const heroElement = getHeroElement(container)
     
-    await initHero(heroElement)
-
     gsap.timeline({ defaults: { ease: 'power4.inout' } })
        .add(() => navBarFadeIn(heroElement.productNavBarA), 0) // Starts 0.75s after the previous animation
-       .add(() => heroMoveTest(heroElement), 0.5) // Starts at 0s
+       .add(() => heroMoveTest(heroElement.productImgWrapper), 0.5) // Starts at 0s
+       .add(() => heroMoveTest(heroElement.productImgTextWrapper), 0.5) // Starts at 0s
        .add(() => addShuffleEffect(heroElement.productH2, heroElement.productH2Chars), 0.5) // Starts 0.5s after the previous animation
        .add(() => fadeIn(heroElement.productTextParagraph), 1) // Starts 0.75s after the previous animation
        .add(() => animateSpin(heroElement.productPrice, heroElement.productPriceChars), 1.1) // Starts 0.75s after the previous animation

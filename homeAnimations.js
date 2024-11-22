@@ -1,15 +1,15 @@
-console.log('homeAnimations.js')
+// console.log('homeAnimations.js')
 
  import { 
     scaleToZero,
     fadeIn,
     navBarFadeIn, 
-    typeTextIndividual
+    typeTextIndividual,
+    yPercentZero,
+    colorChange
  } from "./animations.js";
 
 import { addShuffleEffect } from "./animations.js";
-
-
 
 
 export function heroIntroLoad2(elem, delay = 0) {
@@ -22,18 +22,9 @@ export function heroIntroLoad2(elem, delay = 0) {
     })
 }
 
-function colorChange(element) {
-    gsap.to(element,  {
-        // color: '#fff',
-        opacity: 1,
-        duration: 0.75,
-        ease: 'power3.inout',
-    })
-}
 
 export const getHomeElement = (container) => {
     return {
-
         hero: container.querySelector('.home-hero'),
         heroMask: container.querySelector('.hero-mask'),
         navBarA: container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper'),
@@ -47,40 +38,44 @@ export const getHomeElement = (container) => {
         title: container.querySelector('.home-hero-h1'),
         titleChars: container.querySelectorAll('.home-hero-h1 > .word > .char'),
 
-        // catImgWrapper: container.querySelector('.category-item-image-wrapper-wrapper'),
-        // catH2: container.querySelector('.category-item-h2'),
-        // catH2Chars: container.querySelectorAll('.category-item-h2 > div > div'),
-
-        // catNewProduct: container.querySelector('.typed-text'),
-    
+        // navBar: container.querySelector('.container-1440'),
     }
 }
 
-export const homeInit = (homeElem) => {
-    gsap.set(homeElem.hero, { yPercent: -105 })
-    homeElem.typedTextElem.textContent = '';
-    gsap.set(homeElem.heroMask, { opacity: 1 })
-    gsap.set([homeElem.btnElemTop, homeElem.btnElemBottom], {
-        scaleY: 1,
+export const homeAnimationsInit = (container, calledFrom) => {
+    console.log('homeAnimationsInit - calledFrom:', calledFrom)
+
+    new SplitType(container.querySelector('.home-hero-h1'), {types: "words, chars"});
+    const homeElem = getHomeElement(container)
+
+    return new Promise((resolve) => {
+        // const homeElem = getHomeElement(container)
+
+        gsap.set(homeElem.hero, { yPercent: -105 })
+        homeElem.typedTextElem.textContent = '';
+        gsap.set(homeElem.heroMask, { opacity: 1 })
+        gsap.set([homeElem.btnElemTop, homeElem.btnElemBottom], {
+            scaleY: 1,
+        });
+        gsap.set(homeElem.btnText, {
+            // color: '#d87d4a', 
+            opacity: 0
+        });
+        gsap.set([homeElem.title, homeElem.titleChars, homeElem.heroParagraph], {
+            opacity: 0
+        });
+
+        resolve();
     });
-    gsap.set(homeElem.btnText, {
-        // color: '#d87d4a',
-        opacity: 0
-    });
-    gsap.set([homeElem.title, homeElem.titleChars, homeElem.heroParagraph], {
-        opacity: 0
-    });
+    
 }
 
-const heroMaskFadeOut = (elem) => {
-    gsap.to(elem, { opacity: 0, duration: 0.75, ease: 'power4.inOut' })
-}
+export function homeIntroAnimation(container) {
+    // console.log('homeIntroAnimation')
 
+    const homeElem = getHomeElement(container)
 
-
-function homeIntroAnimation(homeElem, container) {
     gsap.timeline({ defaults: { ease: 'power4.inout' }})
-
     .add(() => navBarFadeIn(homeElem.navBarA), 0.4)
     .add(() => heroIntroLoad2(homeElem.hero), 0.8)
     .add(() => addShuffleEffect(homeElem.title, homeElem.titleChars), 1.7)
@@ -95,23 +90,12 @@ function homeIntroAnimation(homeElem, container) {
     }, 4.5)
 }
 
-export function homeLoadController(container, runAnimation = true) {
-    console.log('homeLoadController')
-
-    new SplitType(container.querySelector('.home-hero-h1'), {types: "words, chars"});
-
-    const homeElem = getHomeElement(container)
-    // console.log('homeElem:', homeElem)
-
-    homeInit(homeElem)
-
-    if (runAnimation) {
-        homeIntroAnimation(homeElem, container)
-    }
+const heroMaskFadeOut = (elem) => {
+    gsap.to(elem, { opacity: 0, duration: 0.75, ease: 'power4.inOut' })
 }
 
 export function heroOutro(container, selector) {
-    console.log('heroOutro')
+    // console.log('heroOutro')
     const hero = container.querySelector(selector)
     return new Promise((resolve) => {
         gsap.to(hero, {

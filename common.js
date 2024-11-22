@@ -1,10 +1,10 @@
 
-function getCartItems() {
+export function getCartItems() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     return cart;
 }
 
-function getCartItemsQty(cartItems) {
+export function getCartItemsQty(cartItems) {
     let cartTotalQty = 0;
     cartItems.forEach(item => {
     cartTotalQty += item.quantity
@@ -17,7 +17,7 @@ function getCartLength() {
     return cart.length;
 }
 
-function getItemDictionary(cartItems) {
+export function getItemDictionary(cartItems) {
     // console.log('cartItems:', cartItems)
       
     // Create a dictionary to aggregate items by name
@@ -46,7 +46,7 @@ function getItemDictionary(cartItems) {
     return itemDictionary;
 }
 
-function applyAnimationClass(element, animationName) {
+export function applyAnimationClass(element, animationName) {
     element.classList.add(animationName);
 
     // Remove the class after the animation ends to allow for re-triggering
@@ -55,13 +55,13 @@ function applyAnimationClass(element, animationName) {
     }, { once: true });
 }
 
-export function disableCheckoutBtn(container) {
+export function disableCheckoutBtn() {
   const goToCheckoutBtn = document.querySelector('#go-to-checkout-btn') 
-    goToCheckoutBtn.classList.add('disabled')
-    goToCheckoutBtn.href = "#"
+  goToCheckoutBtn.classList.add('disabled')
+  goToCheckoutBtn.href = "#"
 }
 
-export function enableCheckoutBtn(container) {
+export function enableCheckoutBtn() {
     console.log('enableCheckoutBtn')
     const goToCheckoutBtn = document.querySelector('#go-to-checkout-btn') 
     goToCheckoutBtn.classList.remove('disabled')

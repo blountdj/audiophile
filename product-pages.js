@@ -1,6 +1,6 @@
 
 import { showCartCountIcon, addCartItemsCount } from './cart-quantity-icon.js'
-import { enableCheckoutBtn } from './common.js'
+import { enableCheckoutBtn, getCartItems, applyAnimationClass } from './common.js'
 
 function addItemToCart(itemToAdd) {
 
@@ -40,7 +40,7 @@ export const initProductPage = (container) => {
 
     // Attach event listeners to all 'add to cart' buttons
     addToCartBtn.addEventListener('click', function() {
-        console.log('addToCartBtn - click')
+        // console.log('addToCartBtn - click')
         // Get product details from data attributes
         // console.log('add to cart - with Jiggle')
         let item = {

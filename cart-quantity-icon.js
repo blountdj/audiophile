@@ -1,7 +1,9 @@
 
-console.log('cart-quantity-icon.js loaded')
+// console.log('cart-quantity-icon.js loaded')
 
 // const navCartQtyCountElem = document.querySelector('#nav-cart-items-count');
+
+import { getCartItems, getCartItemsQty } from './common.js';
 
 export function showCartCountIcon() {
     const counterElem = document.querySelector('#nav-cart-items-count');
@@ -16,6 +18,7 @@ export function hideCartCountIcon() {
 }
 
 export function updateCartCountIcon(qty) {
+    // console.log('updateCartCountIcon')
     const countElem = document.querySelector('#nav-cart-items-count');
 
     if (qty === 0) {

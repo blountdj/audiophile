@@ -112,7 +112,7 @@ export function heroIntroLoad(container, selector, delay = 0) {
 }
 
 export function typeTextMultipleLines(container, textToType) {
-    console.log('typeTextMultipleLines')
+    // console.log('typeTextMultipleLines')
 
     const typedTextElement = container.querySelector('.typed-text');
     typedTextElement.textContent = '';
@@ -172,7 +172,7 @@ export function typeTextMultipleLines(container, textToType) {
 }
 
 export function typeTextIndividual(container, textToType) {
-    console.log('typeTextIndividual')
+    // console.log('typeTextIndividual')
 
     const typedTextElement = container.querySelector('.typed-text');
     typedTextElement.textContent = '';
@@ -214,4 +214,26 @@ export function fadeOutNavA(data) {
 
     const elemsNext = data.next.container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper')
     gsap.set(elemsNext, { opacity: 0 })
+}
+
+export function yPercentZero(element) {
+    // console.log('yPercentZero:', element)
+    gsap.to(element, { 
+        yPercent: 0, 
+        opacity: 1,
+        duration: 0.25, 
+        ease: 'power4.inout',
+        // onComplete: resolve
+     })
+}
+
+export function xPercentZero(element) {
+    // console.log('xPercentZero:', element)
+    gsap.to(element, { 
+        xPercent: 0, 
+        opacity: 1,
+        duration: 0.25, 
+        ease: 'power4.inout',
+        // onComplete: resolve
+     })
 }
