@@ -2,7 +2,7 @@
 
 // const { heroIntroLoad, addShuffleEffect } = await import(`${CONFIG.path}animations.js`);
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v3/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v4/min/js/config-min.js";
 
 const {
     homeImagesUrls,

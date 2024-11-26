@@ -1,8 +1,8 @@
 // console.log('barbaInit.js loaded')
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v3/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v4/min/js/config-min.js";
 
-const { 
+const {
     addFilesCssToBody,
     removeCssFilesFromBody,
     createCSSFileLink,
@@ -15,19 +15,19 @@ const { navbarInit } = await import(`${CONFIG.path}${CONFIG.jsPath}navbar${CONFI
 const { checkoutInit } = await import(`${CONFIG.path}${CONFIG.jsPath}checkout${CONFIG.min}.js`);
 const { checkoutAnimationsInit, checkoutAnimations } = await import(`${CONFIG.path}${CONFIG.jsPath}checkoutAnimations${CONFIG.min}.js`);
 
-const { 
+const {
     transitionInit,
-    leaveTransition, 
+    leaveTransition,
 } = await import(`${CONFIG.path}${CONFIG.jsPath}transitionAnimation${CONFIG.min}.js`);
 
 const { initProductPage } = await import(`${CONFIG.path}${CONFIG.jsPath}product-pages${CONFIG.min}.js`);
 const { productsHeroEnter, initProductAnimations } = await import(`${CONFIG.path}${CONFIG.jsPath}productAnimations${CONFIG.min}.js`);
 
-const { 
-   navBarFadeIn,
-   typeTextIndividual,
-   fadeOutNavA,
-   heroIntroLoad
+const {
+    navBarFadeIn,
+    typeTextIndividual,
+    fadeOutNavA,
+    heroIntroLoad
 } = await import(`${CONFIG.path}${CONFIG.jsPath}animations${CONFIG.min}.js`);
 
 const { homeInit } = await import(`${CONFIG.path}${CONFIG.jsPath}home${CONFIG.min}.js`);
@@ -75,15 +75,15 @@ barba.hooks.beforeEnter((data) => {
     } else if (categories.includes(data.next.namespace)) {
         initCategoriesAnimations(data.next.container)
     } else if (data.next.namespace === 'products') {
-        initProductAnimations(data.next.container) 
+        initProductAnimations(data.next.container)
     } else if (data.next.namespace === 'checkout') {
         checkoutAnimationsInit(data.next.container)
-    } 
+    }
 });
 
 barba.hooks.beforeLeave((data) => {
     // console.log('barba.hooks.beforeLeave')
-    transitionInit(data.next.container, data.next.namespace, 'beforeLeave 91') 
+    transitionInit(data.next.container, data.next.namespace, 'beforeLeave 91')
 })
 
 barba.hooks.once((data) => {
@@ -93,7 +93,7 @@ barba.hooks.once((data) => {
 
     const navBar = data.next.container.querySelectorAll('.navbar > a, nav > a, .nav-cart-icon-wrapper')
     gsap.set(navBar, { opacity: 0 })
-    
+
     if (data.next.namespace === 'home') {
         const introOverlay = document.querySelector('.intro-overlay')
         const barOverlay = document.querySelector('.bar-overlay')
@@ -123,10 +123,10 @@ barba.hooks.once((data) => {
             duration: 1,
             ease: "power4.inOut",
             stagger: {
-              amount: 0.5,
-              from: "random",
+                amount: 0.5,
+                from: "random",
             },
-          }, 3);
+        }, 3);
         tl.set(barOverlay, { autoAlpha: 0 });
 
         setTimeout(() => {
@@ -158,14 +158,14 @@ barba.hooks.afterEnter((data) => {
     const nextPageId = data.next.namespace;
 
     navbarInit(data.next.container)
-    
+
     if (nextPageId === 'home') {
         // addScriptsToBody(homeAnimationsJsFileUrls)
         addFilesCssToBody([homeCssFileUrl])
         homeInit(data.next.container)
     } else if (nextPageId === 'products') {
-        initProductPage(data.next.container) 
-    }  else if (nextPageId === 'checkout') {
+        initProductPage(data.next.container)
+    } else if (nextPageId === 'checkout') {
         checkoutInit(data.next.container)
     } else {
         // removeScriptsFromBody(homeAnimationsJsFileUrls)
@@ -173,7 +173,7 @@ barba.hooks.afterEnter((data) => {
     }
 
     // categories.some(category => nextPageId.includes(category)) && !categories.some(category => currentPageId.includes(category)) ? addScriptsToBody([categoriesAnimationsJsFileUrl]) : removeScriptsFromBody([categoriesAnimationsJsFileUrl])
-    
+
     nextPageId === 'checkout' ? addFilesCssToBody([checkoutCssFileUrl]) : removeCssFilesFromBody([checkoutCssFileUrl])
 
     setTimeout(() => {
@@ -192,14 +192,14 @@ barba.init({
             name: 'home-intro-transition',
             to: { namespace: [...categories, 'home', 'products', 'checkout'] },
             from: { namespace: [...categories, 'home', 'products', 'checkout'] },
-            once() {},
-               
+            once() { },
+
             beforeEnter(data) {
-            //   console.log('beforeEnter')
-              if (data.next.namespace === 'home') {
-                const hero = data.next.container.querySelector('.home-hero')
-                gsap.set(hero, { yPercent: -105 })
-              }
+                //   console.log('beforeEnter')
+                if (data.next.namespace === 'home') {
+                    const hero = data.next.container.querySelector('.home-hero')
+                    gsap.set(hero, { yPercent: -105 })
+                }
             },
             async leave(data) {
                 // console.log('\nLEAVE -', data.current.namespace)
@@ -212,7 +212,7 @@ barba.init({
             async enter(data) {
                 // console.log('\nENTER: namespace:', data.next.namespace)
                 const introSelector = categories.includes(data.next.namespace) ? '.category-hero' : '.home-hero'
-        
+
                 if (data.next.namespace === 'home') {
                     setTimeout(() => {
                         homeIntroAnimation(data.next.container)
@@ -227,7 +227,7 @@ barba.init({
                     setTimeout(() => {
                         categoryAnimation(data.next.container, introSelector)
                     }, 3000);
-                    
+
                     setTimeout(() => {
                         document.head.appendChild(createCSSFileLink(categoriesCssFileUrl));
                         // btnHoverAnimation(data.next.container)
@@ -238,11 +238,11 @@ barba.init({
                     }, 3000);
 
                 } else if (data.next.namespace === 'checkout') {
-                    checkoutInit(data.next.container) 
+                    checkoutInit(data.next.container)
                     setTimeout(() => {
                         checkoutAnimations(data.next.container)
                     }, 3000);
-                    
+
                 } else {
                     heroIntroLoad(data.next.container, introSelector)
                     await animationFadeInEnter(data);
@@ -255,7 +255,7 @@ barba.init({
                     setTimeout(() => {
                         categoryPageInit(data.next.container)
                     }, 5000);
-                }                 
+                }
             },
         }
     ]

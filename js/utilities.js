@@ -33,12 +33,12 @@ export function addFilesCssToBody(cssFiles) {
 
 export function removeCssFilesFromBody(cssFiles) {
   cssFiles.forEach(cssFile => {
-      const bodyLinks = document.body.getElementsByTagName('link');
-      for (let i = bodyLinks.length - 1; i >= 0; i--) {
-          if (bodyLinks[i].href && bodyLinks[i].href.includes(cssFile)) {
-              bodyLinks[i].parentNode.removeChild(bodyLinks[i]);
-          }
+    const bodyLinks = document.body.getElementsByTagName('link');
+    for (let i = bodyLinks.length - 1; i >= 0; i--) {
+      if (bodyLinks[i].href && bodyLinks[i].href.includes(cssFile)) {
+        bodyLinks[i].parentNode.removeChild(bodyLinks[i]);
       }
+    }
   });
 }
 
@@ -66,8 +66,8 @@ export function applyAnimationClass(element, animationName) {
   element.classList.add(animationName);
 
   // Remove the class after the animation ends to allow for re-triggering
-  element.addEventListener('animationend', function() {
-      element.classList.remove(animationName);
+  element.addEventListener('animationend', function () {
+    element.classList.remove(animationName);
   }, { once: true });
 }
 
@@ -82,7 +82,7 @@ export const exampleImagesUrls = [
   "https://assets.lummi.ai/assets/QmNLp8R9b71HLTLBJkGssbJWCqo4LWZ3vkqpLsjZgxW7R7?auto=format&w=1500",
   "https://assets.lummi.ai/assets/QmTv7Cv4ZTrFGGtBYByfMME9feFqAbHo2ZQH5BdETGPq9A?auto=format&w=1500",
   "https://assets.lummi.ai/assets/QmNaeHZVH4xCEKVW39YN2Uzgs437iYSWiN9Bjf5hEQwgd2?auto=format&w=1500",
-  "https://assets.lummi.ai/assets/QmT6DGxzW2WvPe6ecuKX5WDtwttXocJ8e1dxV3qndT6ak7?auto=format&w=1500"
+  "https://assets.lummi.ai/assets/QmT6DGxzW2WvPe6ecuKX5WDtwttXocJ8e1dxv4qndT6ak7?auto=format&w=1500"
 ];
 
 export const headphonesImagesUrls = [
