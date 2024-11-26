@@ -1,15 +1,14 @@
 // console.log('homeAnimations.js')
-
- import { 
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v3/min/js/config-min.js";
+const {
     scaleToZero,
     fadeIn,
-    navBarFadeIn, 
+    navBarFadeIn,
     typeTextIndividual,
-    yPercentZero,
-    colorChange
- } from "./animations.js";
+    colorChange,
+    addShuffleEffect
+} = await import(`${CONFIG.path}${CONFIG.jsPath}animations${CONFIG.min}.js`);
 
-import { addShuffleEffect } from "./animations.js";
 
 
 export function heroIntroLoad2(elem, delay = 0) {
@@ -22,7 +21,6 @@ export function heroIntroLoad2(elem, delay = 0) {
     })
 }
 
-
 export const getHomeElement = (container) => {
     return {
         hero: container.querySelector('.home-hero'),
@@ -34,7 +32,7 @@ export const getHomeElement = (container) => {
         btnElemBottom: container.querySelector('.btn-elem-bottom'),
         btnText: container.querySelector('.btn-1-text'),
         heroParagraph: container.querySelector('.hero-text-paragraph'),
-        
+
         title: container.querySelector('.home-hero-h1'),
         titleChars: container.querySelectorAll('.home-hero-h1 > .word > .char'),
 
@@ -43,9 +41,9 @@ export const getHomeElement = (container) => {
 }
 
 export const homeAnimationsInit = (container, calledFrom) => {
-    console.log('homeAnimationsInit - calledFrom:', calledFrom)
+    // console.log('homeAnimationsInit - calledFrom:', calledFrom)
 
-    new SplitType(container.querySelector('.home-hero-h1'), {types: "words, chars"});
+    new SplitType(container.querySelector('.home-hero-h1'), { types: "words, chars" });
     const homeElem = getHomeElement(container)
 
     return new Promise((resolve) => {
@@ -67,7 +65,7 @@ export const homeAnimationsInit = (container, calledFrom) => {
 
         resolve();
     });
-    
+
 }
 
 export function homeIntroAnimation(container) {
@@ -75,19 +73,19 @@ export function homeIntroAnimation(container) {
 
     const homeElem = getHomeElement(container)
 
-    gsap.timeline({ defaults: { ease: 'power4.inout' }})
-    .add(() => navBarFadeIn(homeElem.navBarA), 0.4)
-    .add(() => heroIntroLoad2(homeElem.hero), 0.8)
-    .add(() => addShuffleEffect(homeElem.title, homeElem.titleChars), 1.7)
-    .add(() => heroMaskFadeOut(homeElem.heroMask), 1.5)
-    .add(() => fadeIn(homeElem.heroParagraph), 2.5) 
-    .add(() => scaleToZero(homeElem.btnElemTop, 'top'), 3) // Starts 1s after the previous animation
-    .add(() => scaleToZero(homeElem.btnElemBottom, 'bottom'), 3) // Starts 1s after the previous animation
-    .add(() => colorChange(homeElem.btnText), 3.5) // Starts 0.75s after the previous animation
-    .add(() => {
-        let typingAnimation = typeTextIndividual(container, 'new product');
-        typingAnimation.play()
-    }, 4.5)
+    gsap.timeline({ defaults: { ease: 'power4.inout' } })
+        .add(() => navBarFadeIn(homeElem.navBarA), 0.4)
+        .add(() => heroIntroLoad2(homeElem.hero), 0.8)
+        .add(() => addShuffleEffect(homeElem.title, homeElem.titleChars), 1.7)
+        .add(() => heroMaskFadeOut(homeElem.heroMask), 1.5)
+        .add(() => fadeIn(homeElem.heroParagraph), 2.5)
+        .add(() => scaleToZero(homeElem.btnElemTop, 'top'), 3) // Starts 1s after the previous animation
+        .add(() => scaleToZero(homeElem.btnElemBottom, 'bottom'), 3) // Starts 1s after the previous animation
+        .add(() => colorChange(homeElem.btnText), 3.5) // Starts 0.75s after the previous animation
+        .add(() => {
+            let typingAnimation = typeTextIndividual(container, 'new product');
+            typingAnimation.play()
+        }, 4.5)
 }
 
 const heroMaskFadeOut = (elem) => {
@@ -106,5 +104,3 @@ export function heroOutro(container, selector) {
         });
     });
 }
-
-

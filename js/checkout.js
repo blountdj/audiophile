@@ -1,11 +1,10 @@
 
-
-import { getCartItems, getItemDictionary } from "./common.js"
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v3/min/js/config-min.js";
+const { getCartItems, getCartLength, getItemDictionary } = await import(`${CONFIG.path}${CONFIG.jsPath}common${CONFIG.min}.js`);
 
 
 const getCheckoutElems = (container) => {
     return {
-
         emoneyElements: container.querySelectorAll('.form-input-wrapper.is-emoney'),
         cashOnDeliveryElement: container.querySelector('#cash-on-delivery'),
         eMoneyInput: container.querySelector('#emoney'),
@@ -34,7 +33,7 @@ const getCheckoutElems = (container) => {
         checkoutGrandTotalTextElem: container.querySelector('#Grand-Total'),
         checkoutGrandTotalTextElemHidden: container.querySelector('#Grand-Total-Hidden'),
 
-            // OVERLAY ELEMENTS
+        // OVERLAY ELEMENTS
         checkoutOverlayGrandTotalText: container.querySelector('#overlay-grand-total'),
         checkoutOverlayOtherItemsCountText: container.querySelector('#overlay-other-items-count'),
         checkoutOverlayOtherItemsPlural: container.querySelector('#overlay-other-items-plural'),
@@ -65,25 +64,66 @@ function toggleEmoneyDisplay(checkoutElems) {
 
     const eMoneyDisplayStyle = checkoutElems.eMoneyInput.checked ? 'block' : 'none';
     const cashOnDeliveryDisplayStyle = checkoutElems.cashOnDeliveryRadioButton.checked ? 'flex' : 'none';
-    
+
     checkoutElems.emoneyElements.forEach(element => {
         element.style.display = eMoneyDisplayStyle;
     });
-    
+
     checkoutElems.cashOnDeliveryElement.style.display = cashOnDeliveryDisplayStyle;
 }
 
 export function checkoutInit(container) {
-    console.log('checkoutInit')
+    // console.log('checkoutInit')
 
     const elems = getCheckoutElems(container)
-   
+
     // Add event listener to the radio button
     elems.eMoneyRadioButton.addEventListener('change', () => toggleEmoneyDisplay(elems));
     elems.cashOnDeliveryRadioButton.addEventListener('change', () => toggleEmoneyDisplay(elems));
 
     toggleEmoneyDisplay(elems);
     checkoutDisplayCartItems(elems)
+
+    $('[wr-type="submit"]').click(function (event) {
+        // console.log('submit clicked')
+
+        // event.preventDefault();
+
+        let errors = [];
+        const noItemsInCart = getCartLength();
+        if (noItemsInCart === 0) {
+            alert('Cart is empty');
+            return;
+        }
+
+        errors.push(checkInput(elems.nameInputWrapperElem, 'text'))
+        errors.push(checkInput(elems.emailInputWrapperElem, 'email'))
+        errors.push(checkInput(elems.phoneInputWrapperElem, 'phone'))
+        errors.push(checkInput(elems.addressInputWrapperElem, 'text'))
+        errors.push(checkInput(elems.zipInputWrapperElem, 'text'))
+        errors.push(checkInput(elems.cityInputWrapperElem, 'text'))
+        errors.push(checkInput(elems.countryInputWrapperElem, 'text'))
+        errors.push(checkRadioInputs(container))
+
+        if (errors.includes(true)) {
+            alert("Some data is invalid, please check highlighted fields")
+        } else {
+            elems.successConfirmationNameElem.innerHTML = elems.nameInputWrapperElem.querySelector('input').value;
+
+            localStorage.removeItem('cart');
+            const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
+            navCartItemsCountElem.textContent = '0';
+
+            const form = this.closest('form');
+            if (form) {
+                const submitEvent = new Event('submit', {
+                    bubbles: true,
+                    cancelable: true
+                });
+                form.dispatchEvent(submitEvent);
+            }
+        }
+    });
 }
 
 function clearCart() {
@@ -91,11 +131,11 @@ function clearCart() {
     // displayCartItems();
     updateCartCountIcon(0);
 }
-        
+
 // function checkoutGetItemDictionary(checkoutCartItems) {
 //     // Create a dictionary to aggregate items by name
 //     let checkoutItemDictionary = {};
-        
+
 //     // Iterate over cart items to aggregate quantities and calculate subtotals
 //     checkoutCartItems.forEach(checkoutItem => {
 //         const checkoutPrice = parseFloat(checkoutItem.price);            
@@ -114,7 +154,7 @@ function clearCart() {
 //         }
 //         checkoutItemDictionary[checkoutItem.name].subtotal += (checkoutPrice * checkoutQty);
 //     });
-        
+
 // 	return checkoutItemDictionary;
 // }
 
@@ -122,7 +162,7 @@ function resizeInput() {
     this.style.width = this.value.length + "ch";
 }
 
-function setElementsToReadOnly(elements){
+function setElementsToReadOnly(elements) {
     // console.log('setElementsToReadOnly')
     // console.log(elements)
     const readOnlyElems = [
@@ -142,21 +182,21 @@ function setElementsToReadOnly(elements){
 
 }
 
-const productImages = {
-    "XX59 headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7babf36e28a4099e1_image-xx59-headphones.webp",
-    "XX99 Mark II Headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7a5febb3d1293a126_image-xx99-mark-two-headphones.webp",
-    "XX99 Mark I Headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7f2e9d0fead12a5c1_image-xx99-mark-one-headphones.webp",
-    "YX1 Wireless Earphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a9ffc4960e95071c19_image-yx1-earphones.webp",
-    "ZX7 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a778d4e0d0ff09b076_image-zx7-speaker.webp",
-    "ZX9 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a82554a6dd42ae0c7b_image-zx9-speaker.webp"
-};
+// const productImages = {
+//     "XX59 headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7babf36e28a4099e1_image-xx59-headphones.webp",
+//     "XX99 Mark II Headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7a5febb3d1293a126_image-xx99-mark-two-headphones.webp",
+//     "XX99 Mark I Headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7f2e9d0fead12a5c1_image-xx99-mark-one-headphones.webp",
+//     "YX1 Wireless Earphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a9ffc4960e95071c19_image-yx1-earphones.webp",
+//     "ZX7 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a778d4e0d0ff09b076_image-zx7-speaker.webp",
+//     "ZX9 Speaker": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a82554a6dd42ae0c7b_image-zx9-speaker.webp"
+// };
 
-    // Function to display cart items
+// Function to display cart items
 export function checkoutDisplayCartItems(elems) {
 
     // VARS
     let hiddenProductText = '';
-    let checkoutTotal = 0; 
+    let checkoutTotal = 0;
     let index = 0;
     let checkoutProductImages = {
         "XX59 headphones": "https://uploads-ssl.webflow.com/668513a42a5375354f72cff0/668817a7babf36e28a4099e1_image-xx59-headphones.webp",
@@ -189,14 +229,14 @@ export function checkoutDisplayCartItems(elems) {
 
     // let checkoutCartItems = checkoutGetCartItems();
     let checkoutCartItems = getCartItems();
-    console.log('checkoutCartItems:', checkoutCartItems);
-    console.log('checkoutCartItems.length:', checkoutCartItems.length);
+    // console.log('checkoutCartItems:', checkoutCartItems);
+    // console.log('checkoutCartItems.length:', checkoutCartItems.length);
 
     // Clear the current content
     elems.checkoutCartItemsContainer.innerHTML = '';
 
     if (checkoutCartItems.length === 0) {
-        console.log("checkoutCartItems.length === 0")
+        // console.log("checkoutCartItems.length === 0")
         elems.checkoutCartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
         elems.checkoutTotalTextElem.textContent = `$ 0`;
         return;
@@ -204,7 +244,7 @@ export function checkoutDisplayCartItems(elems) {
 
     // Create a dictionary to aggregate items by name
     const checkoutItemDictionary = getItemDictionary(checkoutCartItems)
-    console.log('checkoutItemDictionary:', checkoutItemDictionary);
+    // console.log('checkoutItemDictionary:', checkoutItemDictionary);
 
     // Iterate over itemDictionary to display each unique item
     for (let key in checkoutItemDictionary) {
@@ -243,11 +283,11 @@ export function checkoutDisplayCartItems(elems) {
 
     // checkoutGrandTotalTextElem.readOnly = true;
     const readOnlyElems = [
-        elems.checkoutGrandTotalTextElem, 
-        elems.checkoutTotalTextElemHidden, 
-        elems.checkoutShippingTextElem, 
-        elems.checkoutShippingTextElemHidden, 
-        elems.checkoutVatTextElem, 
+        elems.checkoutGrandTotalTextElem,
+        elems.checkoutTotalTextElemHidden,
+        elems.checkoutShippingTextElem,
+        elems.checkoutShippingTextElemHidden,
+        elems.checkoutVatTextElem,
         elems.checkoutGrandTotalTextElem,
         elems.checkoutTotalTextElem,
     ]
@@ -255,14 +295,14 @@ export function checkoutDisplayCartItems(elems) {
     //     console.log('elem:', elem)
     // })
     setElementsToReadOnly(readOnlyElems)
-    
+
 
     // CALCULATED VALUES
-    const checkoutGrandTotal = (checkoutTotal + 50)    
+    const checkoutGrandTotal = (checkoutTotal + 50)
     const checkoutVatTotal = checkoutGrandTotal * 0.20
 
-    console.log('checkoutTotal:', checkoutTotal)
-    console.log('checkoutGrandTotal:', checkoutGrandTotal)
+    // console.log('checkoutTotal:', checkoutTotal)
+    // console.log('checkoutGrandTotal:', checkoutGrandTotal)
 
     // UPDATE SUMMARY SECTION
     checkoutTotalTextElem.value = `$ ${checkoutTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -282,19 +322,19 @@ export function checkoutDisplayCartItems(elems) {
     // UPDATE OVERLAY
     const checkoutFirstKey = Object.keys(checkoutItemDictionary)[0];
     const checkoutfirstValue = checkoutItemDictionary[checkoutFirstKey];
-    
+
     checkoutOverlayItemName.textContent = `${checkoutfirstValue.cartName}`;
     checkoutOverlayItemPrice.textContent = `$ ${checkoutfirstValue.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    
+
     checkoutOverlayItemQty.textContent = `x${checkoutfirstValue.quantity}`;
     checkoutOverlayGrandTotalText.textContent = `$ ${checkoutGrandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    
+
     const checkoutDictionaryLength = Object.keys(checkoutItemDictionary).length;
     // console.log('checkoutDictionaryLength:', checkoutDictionaryLength)
-    
+
     let checkoutOverlayImgUrl = checkoutProductImages[checkoutfirstValue.name]
     checkoutOverlayOtherItemImage.src = checkoutOverlayImgUrl;
-    
+
     if (checkoutDictionaryLength > 1) {
         // console.log('dictionaryLength > 1')
         checkoutOverlayBottomWrapper.style.display = 'flex';
@@ -302,12 +342,12 @@ export function checkoutDisplayCartItems(elems) {
         let checkoutOverlayOtherItemsPluralDisplay = checkoutDictionaryLength === 2 ? `` : `(s)`;
         checkoutOverlayOtherItemsPlural.textContent = `${checkoutOverlayOtherItemsPluralDisplay}`;
     }
-    
-    
-        orderConfirmationGoHomeButton.addEventListener('click', function() {
+
+
+    orderConfirmationGoHomeButton.addEventListener('click', function () {
         // checkoutOverlayElem.style.display = 'none';  
         clearCart()
-    }) 
+    })
 }
 
 
@@ -331,7 +371,7 @@ function isNumericAndLength(value, minLength) {
 function updateInputActions(inputElem, labelElem, errorElem, errorMsg, error) {
     if (error) {
         inputElem.style.border = '1px solid #cd2c2c';
-        labelElem.style.color = '#cd2c2c'; 
+        labelElem.style.color = '#cd2c2c';
         errorElem.style.display = 'block';
         errorElem.textContent = errorMsg;
 
@@ -339,7 +379,7 @@ function updateInputActions(inputElem, labelElem, errorElem, errorMsg, error) {
         inputElem.style.border = '1px solid #cfcfcf';
         labelElem.style.color = 'black';
         errorElem.style.display = 'none';
-    }  
+    }
 
 }
 
@@ -354,7 +394,7 @@ function checkInput(inputWrapperElem, type) {
         'emoneyNumber': 'Must be 9 digits',
         'emoneyPin': 'Must be 4 digits',
     }
-    
+
     const inputElem = inputWrapperElem.querySelector('input');
     const labelElem = inputWrapperElem.querySelector('label');
     const errorElem = inputWrapperElem.querySelector('.checkout-error-text');
@@ -366,41 +406,41 @@ function checkInput(inputWrapperElem, type) {
             errors = true;
         } else {
             updateInputActions(inputElem, labelElem, errorElem, '', false)
-        }       
+        }
     } else if (type === 'email') {
         if (!validateEmail(value)) {
-            console.log("The email is invalid.");
+            // console.log("The email is invalid.");
             updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
             errors = true;
         } else {
-            console.log("The email is valid.");
+            // console.log("The email is valid.");
             updateInputActions(inputElem, labelElem, errorElem, '', false)
         }
     } else if (type === 'phone') {
         if (isNumericAndLength(value, 9)) {
-            console.log("The phone is invalid.");
+            // console.log("The phone is invalid.");
             updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
             errors = true;
         } else {
-            console.log("The phone is valid.");
+            // console.log("The phone is valid.");
             updateInputActions(inputElem, labelElem, errorElem, '', false)
         }
     } else if (type === 'emoneyNumber') {
         if (!isNumericAndLength(value, 9)) {
-            console.log("The emoneyNumber is invalid.");
+            // console.log("The emoneyNumber is invalid.");
             updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
             errors = true;
         } else {
-            console.log("The emoneyNumber is valid.");
+            // console.log("The emoneyNumber is valid.");
             updateInputActions(inputElem, labelElem, errorElem, '', false)
         }
     } else if (type === 'emoneyPin') {
         if (!isNumericAndLength(value, 4)) {
-            console.log("The emoneyPin is invalid.");
+            // console.log("The emoneyPin is invalid.");
             updateInputActions(inputElem, labelElem, errorElem, errorMsgs[type], true)
             errors = true;
         } else {
-            console.log("The emoneyPin is valid.");
+            // console.log("The emoneyPin is valid.");
             updateInputActions(inputElem, labelElem, errorElem, '', false)
         }
     }
@@ -408,24 +448,24 @@ function checkInput(inputWrapperElem, type) {
     return errors;
 }
 
-function checkRadioInputs() {
+function checkRadioInputs(container) {
     let radioError = true;
 
     // Get radio button elements
-    const emoneyRadioWrapperElem = document.getElementById('e-money-radio');
-    const cashOnDeliveryRadioWrapperElem = document.getElementById('cash-on-delivery-radio');
+    const emoneyRadioWrapperElem = container.querySelector('#e-money-radio');
+    const cashOnDeliveryRadioWrapperElem = container.querySelector('#cash-on-delivery-radio');
     const emoneyRadioInput = emoneyRadioWrapperElem.querySelector('input');
     const cashOnDeliveryRadioInput = cashOnDeliveryRadioWrapperElem.querySelector('input');
-    const labelElem = document.getElementById('payment-method-label');
-    const paymentMethodErrorTextElem = document.getElementById('payment-method-error-text');
-    
-    const emoneyNumberInputWrapperElem = document.getElementById('e-money-number-input-wrapper');
-    const emoneyPinInputWrapperElem = document.getElementById('e-money-pin-input-wrapper');
-    
+    const labelElem = container.querySelector('#payment-method-label');
+    const paymentMethodErrorTextElem = container.querySelector('#payment-method-error-text');
+
+    const emoneyNumberInputWrapperElem = container.querySelector('#e-money-number-input-wrapper');
+    const emoneyPinInputWrapperElem = container.querySelector('#e-money-pin-input-wrapper');
+
 
     // emoneyRadioInput if each radio button is checked
     if (emoneyRadioInput.checked) {
-        console.log('emoney is checked');
+        // console.log('emoney is checked');
         radioError = false;
         updateInputActions(emoneyRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
         updateInputActions(cashOnDeliveryRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
@@ -433,52 +473,15 @@ function checkRadioInputs() {
         checkInput(emoneyPinInputWrapperElem, 'emoneyPin')
 
     } else if (cashOnDeliveryRadioInput.checked) {
-        console.log('cash on delivery is checked');
+        // console.log('cash on delivery is checked');
         radioError = false;
         updateInputActions(emoneyRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
         updateInputActions(cashOnDeliveryRadioWrapperElem, labelElem, paymentMethodErrorTextElem, '', false)
     } else {
-        console.log('No option is checked');
+        // console.log('No option is checked');
         updateInputActions(emoneyRadioWrapperElem, labelElem, paymentMethodErrorTextElem, 'Please select a payment method', true)
         updateInputActions(cashOnDeliveryRadioWrapperElem, labelElem, paymentMethodErrorTextElem, 'Please select a payment method', true)
     }
 
     return radioError;
 }
-
-$('[wr-type="submit"]').click(function(event) { 
-    // console.log('submit3 clicked')
-
-    // event.preventDefault();
-
-    let errors = [];
-    const noItemsInCart = getCartLength();
-    if (noItemsInCart === 0) {
-        alert('Cart is empty');
-        return;
-    }
-    
-    errors.push(checkInput(nameInputWrapperElem, 'text'))
-    errors.push(checkInput(emailInputWrapperElem, 'email'))
-    errors.push(checkInput(phoneInputWrapperElem, 'phone'))
-    errors.push(checkInput(addressInputWrapperElem, 'text'))
-    errors.push(checkInput(zipInputWrapperElem, 'text'))
-    errors.push(checkInput(cityInputWrapperElem, 'text'))
-    errors.push(checkInput(countryInputWrapperElem, 'text'))
-    errors.push(checkRadioInputs())
-
-    // console.log('errors:', errors)
-
-    if (errors.includes(true)) {
-        alert("Some data is invalid, please check highlighted fields")
-    } else {
-        successConfirmationNameElem.innerHTML = nameInputWrapperElem.querySelector('input').value;
-
-        localStorage.removeItem('cart');
-        const navCartItemsCountElem = document.querySelector('#nav-cart-items-count');
-        navCartItemsCountElem.textContent = '0';
-
-        //   console.log('submitting')
-            $(this).parents('form').submit()      
-    }
-}); 

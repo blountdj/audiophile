@@ -1,0 +1,1 @@
+export const CONFIG={barbaDebug:!1,pathJs:"https://cdn.jsdelivr.net/gh/blountdj/audiophile@v3/",jsPath:"min/js/",min:"-min",cssPath:"min/css/"};

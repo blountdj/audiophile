@@ -1,0 +1,1 @@
+export function homeInit(e){const t=e.querySelector("#home-zx9-speaker-wrapper"),s=e.querySelector("#speaker-bg-circles"),c=e.querySelector("#zx9-image");t.addEventListener("mouseover",(function(){s.classList.add("active"),c.classList.add("active")})),t.addEventListener("mouseout",(function(){s.classList.remove("active"),c.classList.remove("active")}))}

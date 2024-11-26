@@ -1,5 +1,3 @@
-console.log('navbar.js')
-// MENU DROPDOWN
 
 let menuState = 'closed'
 

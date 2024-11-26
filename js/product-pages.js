@@ -1,6 +1,8 @@
 
-import { showCartCountIcon, addCartItemsCount } from './cart-quantity-icon.js'
-import { enableCheckoutBtn, getCartItems, applyAnimationClass } from './common.js'
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v3/min/js/config-min.js";
+
+const { showCartCountIcon, addCartItemsCount } = await import(`${CONFIG.path}${CONFIG.jsPath}cart-quantity-icon${CONFIG.min}.js`);
+const { enableCheckoutBtn, getCartItems, applyAnimationClass } = await import(`${CONFIG.path}${CONFIG.jsPath}common${CONFIG.min}.js`);
 
 function addItemToCart(itemToAdd) {
 
@@ -32,17 +34,12 @@ function addItemToCart(itemToAdd) {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-
 export const initProductPage = (container) => {
-    console.log('initProductPage')
+    // console.log('initProductPage')
 
     const addToCartBtn = container.querySelector('#add-to-cart');
 
-    // Attach event listeners to all 'add to cart' buttons
-    addToCartBtn.addEventListener('click', function() {
-        // console.log('addToCartBtn - click')
-        // Get product details from data attributes
-        // console.log('add to cart - with Jiggle')
+    addToCartBtn.addEventListener('click', function () {
         let item = {
             id: this.getAttribute('data-id'),
             name: container.querySelector('#product-name').getAttribute('data-name'),
@@ -52,7 +49,7 @@ export const initProductPage = (container) => {
             subtotal: parseFloat(container.querySelector('#product-price').getAttribute('data-price'))
         };
         addItemToCart(item);
-        
+
         const navCartIconsCount = document.querySelector('#nav-cart-items-count');
         if (navCartIconsCount.innerHTML === '0') {
             addCartItemsCount();
@@ -61,10 +58,9 @@ export const initProductPage = (container) => {
         } else {
             applyAnimationClass(navCartIconsCount, 'pop-part-1')
             setTimeout(() => {
-                addCartItemsCount()  
+                addCartItemsCount()
             }, 250);
         }
     });
 }
 
-// initProductPage()

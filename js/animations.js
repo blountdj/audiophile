@@ -61,6 +61,7 @@ export const navBarFadeIn = (elem) => {
 export function colorChange(element) {
     gsap.to(element,  {
         color: '#fff',
+        opacity: 1,
         duration: 0.75,
         ease: 'power3.inout',
     })
@@ -120,7 +121,7 @@ export function typeTextMultipleLines(container, textToType) {
     const cursorElement = container.querySelector('.cursor');
 
     const lines = textToType.split('\n');
-    console.log('lines:', lines)
+    // console.log('lines:', lines)
     // const lines = [textToType]
 
     let timeline = gsap.timeline();
@@ -134,7 +135,7 @@ export function typeTextMultipleLines(container, textToType) {
     cursorTimeline.to(cursorElement, { opacity: 0, duration: 0.5 });
 
     lines.forEach((line, index) => {
-        console.log('--line:', line, 'index:', index, 'currentContent:', currentContent)
+        // console.log('--line:', line, 'index:', index, 'currentContent:', currentContent)
         // Append the current line character by character
         timeline.to(typedTextElement, {
             duration: line.length * typingSpeed,  // Typing speed (based on line length)

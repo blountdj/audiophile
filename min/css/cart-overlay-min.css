@@ -1,0 +1,1 @@
+@keyframes delete-item{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0)}}.to-delete{animation:delete-item .5s ease-in-out}.cart-item{transition:all .5s ease-in-out}
