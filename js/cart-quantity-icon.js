@@ -1,7 +1,7 @@
 
 // console.log('cart-quantity-icon.js loaded')
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 const { getCartItems, getCartItemsQty } = await import(`${CONFIG.path}${CONFIG.jsPath}common${CONFIG.min}.js`);
 
 export function showCartCountIcon() {
@@ -17,7 +17,6 @@ export function hideCartCountIcon() {
 }
 
 export function updateCartCountIcon(qty) {
-    // console.log('updateCartCountIcon')
     const countElem = document.querySelector('#nav-cart-items-count');
 
     if (qty === 0) {
@@ -42,10 +41,8 @@ export function minusCartItemsCount() {
 }
 
 export function cartQtyIconInit(container = document) {
-    // console.log('cartQtyIconInit')
     const cartItems = getCartItems();
     const cartItemsQty = getCartItemsQty(cartItems)
-    // console.log('cartItemsQty:', cartItemsQty)
     if (cartItemsQty !== 0) {
         showCartCountIcon()
     }

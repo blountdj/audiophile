@@ -1,5 +1,5 @@
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 
 const {
   enableCheckoutBtn,

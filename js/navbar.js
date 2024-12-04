@@ -14,7 +14,6 @@ const getMenuElement = (contaier) => {
 function toggleNavMenu( menuElem) {
     // event.preventDefault()
     // console.log('toggleNavMenu: menuState:', menuState)
-    const webflowNavOverlay = document.querySelector('.w-nav-overlay')
     if (menuState === 'closed') {
         menuElem.dropDownMenuElem.classList.remove('is-closed');
         menuElem.navMenuOverlayElem.classList.remove('is-closed');
@@ -26,12 +25,16 @@ function toggleNavMenu( menuElem) {
     } else if (menuState === 'open') {
         menuElem.dropDownMenuElem.classList.add('is-closed');
         menuElem.navMenuOverlayElem.classList.add('is-closed');
+
         setTimeout(() => {
             menuElem.navMenuOverlayElem.display = 'none';
+            // menuElem.webflowNavOverlay.style.width = '0px'
         }, 200);
         menuState = 'closed'
     }
 }
+
+
 
 export const navbarInit = (contaier) => {
     // console.log('navbarInit')

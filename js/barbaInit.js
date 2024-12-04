@@ -1,6 +1,6 @@
 // console.log('barbaInit.js loaded')
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 
 const {
     addFilesCssToBody,
@@ -35,10 +35,11 @@ const { categoryPageInit, alternateCategoryItems } = await import(`${CONFIG.path
 
 const { categoryAnimation, initCategoriesAnimations } = await import(`${CONFIG.path}${CONFIG.jsPath}categoriesAnimations${CONFIG.min}.js`);
 
-const homeCssFileUrl = `${CONFIG.path}${CONFIG.cssPath}home${CONFIG.min}.css`
-const checkoutCssFileUrl = `${CONFIG.path}${CONFIG.cssPath}checkout${CONFIG.min}.css`
-const categoriesCssFileUrl = `${CONFIG.path}${CONFIG.cssPath}category-pages${CONFIG.min}.css`
-
+const homeCssFileUrl = `${CONFIG.pathCss}${CONFIG.cssPath}home${CONFIG.min}.css`
+const checkoutCssFileUrl = `${CONFIG.pathCss}${CONFIG.cssPath}checkout${CONFIG.min}.css`
+const categoriesCssFileUrl = `${CONFIG.pathCss}${CONFIG.cssPath}category-pages${CONFIG.min}.css`
+// const productPageCssFileUrl = `${CONFIG.pathCss}${CONFIG.cssPath}productPage${CONFIG.min}.css`
+// console.log('homeCssFileUrl:', homeCssFileUrl)
 
 const categories = ['headphones', 'earphones', 'speakers']
 
@@ -127,7 +128,7 @@ barba.hooks.once((data) => {
                 from: "random",
             },
         }, 3);
-        tl.set(barOverlay, { autoAlpha: 0 });
+        tl.set(barOverlay, { autoAlpha: 0 }, 5);
 
         setTimeout(() => {
             homeIntroAnimation(data.next.container, 'once 136')

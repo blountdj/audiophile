@@ -40,3 +40,19 @@ div.btn-wrapper {
   div.btn-wrapper:hover .btn-1-text {
     transform: translateY(-34px);
   }
+
+.static-cha {
+    position: relative;
+    display: inline-block;
+    color: aqua;
+}
+
+.animated-char {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    color: white;
+    opacity: 0;
+}

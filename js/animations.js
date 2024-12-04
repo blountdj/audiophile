@@ -1,58 +1,89 @@
 
-export function addShuffleEffect(element, chars) {
-    // console.log('addShuffleEffect')
 
+export function addShuffleEffect(element, chars, color = 'white') {
     return new Promise((resolve, reject) => {
-        // const chars = element.querySelectorAll(".char");
-        const originalText = [...chars].map((char) => char.textContent);
-        const shuffleInterval = 10;
-        const resetDelay = 5; // 75
-        const additionalDelay = 80; // 150
-        const opacityDelay = 50; // Adjust this to fine-tune the opacity change timing
-        const initialDelay = 100; // Introduce a slight initial delay for all characters
-
-        gsap.set(element, {
-            opacity: 1,
+        // First, create child elements for each char
+        chars.forEach(char => {
+            const originalChar = char.textContent;
+            // Clear the parent
+            char.textContent = '';
+            
+            // Create static background character
+            const staticChar = document.createElement('div');
+            staticChar.textContent = originalChar;
+            staticChar.className = 'static-char';
+            
+            // Create animated character
+            const animatedChar = document.createElement('div');
+            animatedChar.textContent = originalChar;
+            animatedChar.className = 'animated-char';
+            animatedChar.style.color = color;
+            
+            // Style the parent for positioning
+            char.style.position = 'relative';
+                        
+            // Add both characters to the parent
+            char.appendChild(staticChar);
+            char.appendChild(animatedChar);
         });
 
-        chars.forEach((char, index) => {
+        // Get all animated characters
+        const animatedChars = element.querySelectorAll(".animated-char");
+        const originalText = [...animatedChars].map((char) => char.textContent);
+        
+        const shuffleInterval = 10;
+        const resetDelay = 5;
+        const additionalDelay = 80;
+        const opacityDelay = 50;
+        const initialDelay = 100;
+
+        // gsap.set(element, {
+        //     opacity: 1,
+        // });
+
+        animatedChars.forEach((char, index) => {
             if (index === 0) {
-                gsap.set(char, { opacity: 1 }); // Explicitly set opacity to 1 for the first character
+                gsap.set(char, { opacity: 1 });
             }
         });
 
-        chars.forEach((char, index) => {
-            // Delay the start of each character's animation based on its index, plus the initial delay
+        animatedChars.forEach((char, index) => {
             setTimeout(() => {
-                if (index > 0) { // Skip the first character as it's already handled
-                    // Start with the character having opacity 0, then set it to 1 after a brief delay
+                if (index > 0) {
                     gsap.to(char, { opacity: 1, duration: 0.1, delay: opacityDelay });
                 }
 
-                // Shuffle the character
                 const interval = setInterval(() => {
                     char.textContent = String.fromCharCode(
                         97 + Math.floor(Math.random() * 26)
                     );
                 }, shuffleInterval);
 
-                // Stop the shuffle, reset the text, and then allow the next character to start
                 setTimeout(() => {
                     clearInterval(interval);
                     char.textContent = originalText[index];
-                    // If not the last character, delay the next character's start
-                    if (index < chars.length - 1) {
-                        // The next character's opacity will be set to 1 after this delay
+                    if (index < animatedChars.length - 1) {
                         setTimeout(() => {
-                            gsap.to(chars[index + 1], { opacity: 1, duration: 0.1 });
-                        }, resetDelay + opacityDelay); // Adjusted delay to account for opacity change
+                            gsap.to(animatedChars[index + 1], { opacity: 1, duration: 0.1 });
+                        }, resetDelay + opacityDelay);
                     }
                 }, resetDelay + index * additionalDelay);
-            }, index * (shuffleInterval + opacityDelay) + (index > 0? initialDelay : 0));
+            }, index * (shuffleInterval + opacityDelay) + (index > 0 ? initialDelay : 0));
         });
+        
         globalThis.setTimeout(resolve, 0);
     });
 }
+
+export function updateH1AfterShuffle(titleChars, color = 'white') {
+    // console.log('updateH1AfterShuffle')
+    gsap.set([titleChars], {
+        color: color
+    });
+    const animatedChars = document.querySelectorAll('.animated-char');
+    animatedChars.forEach(char => char.remove());
+}
+
 
 export const navBarFadeIn = (elem) => {
     gsap.to(elem, { opacity: 1, duration: 0.25, stagger: 0.075, ease: 'power4.inout' })

@@ -1,5 +1,5 @@
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 
 const {
     navBarFadeIn,
@@ -7,6 +7,7 @@ const {
     fadeIn,
     addShuffleEffect,
     scaleToZero,
+    updateH1AfterShuffle
 } = await import(`${CONFIG.path}${CONFIG.jsPath}animations${CONFIG.min}.js`);
 
 const getHeroElement = (container) => {
@@ -29,24 +30,26 @@ const getHeroElement = (container) => {
         btnElemBottom: container.querySelector('.btn-elem-bottom'),
 
         prodBtnText: container.querySelector('.btn-1-text'),
-
     }
 }
 
 export function initProductAnimations(container) {
-    // console.log('initProductAnimations')
+    // console.log('initProductAnimations1')
     new SplitType(container.querySelector('h1'), { types: "words, chars" });
     new SplitType(container.querySelector('.product-price'), { types: "words, chars" });
 
     const heroElement = getHeroElement(container)
-    gsap.set([heroElement.productH2, heroElement.productH2Chars, heroElement.productTextParagraph,
-    heroElement.prodBtnText
+    gsap.set([heroElement.productTextParagraph, heroElement.prodBtnText
     ], {
         opacity: 0,
     });
 
     gsap.set([heroElement.btnElemTop, heroElement.btnElemBottom], {
         scaleY: 1,
+    });
+
+    gsap.set(heroElement.productH2Chars, {
+        color: 'transparent'
     });
 
     gsap.set([heroElement.productPrice], { yPercent: -285, rotate: -15 }); // 285
@@ -72,15 +75,15 @@ export const productsHeroEnter = async (container) => {
     // console.log('productsHeroEnter')
 
     const elems = getHeroElement(container)
-
     gsap.timeline({ defaults: { ease: 'power4.inout' } })
         .add(() => navBarFadeIn(elems.productNavBarA), 0)
         .add(() => heroMoveTest(elems.productImgWrapper), 0.5)
         .add(() => heroMoveTest(elems.productImgTextWrapper), 0.5)
-        .add(() => addShuffleEffect(elems.productH2, elems.productH2Chars), 0.5)
+        .add(() => addShuffleEffect(elems.productH2, elems.productH2Chars, 'black'), 0.75)
         .add(() => fadeIn(elems.productTextParagraph), 1)
         .add(() => animateSpin(elems.productPrice, elems.productPriceChars), 1.1)
         .add(() => scaleToZero(elems.btnElemTop, 'top'), 1.7)
         .add(() => scaleToZero(elems.btnElemBottom, 'bottom'), 1.7)
         .add(() => fadeIn(elems.prodBtnText), 1.7)
+        .add(() => updateH1AfterShuffle(elems.productH2Chars, 'black'), 3)
 }

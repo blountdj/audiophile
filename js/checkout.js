@@ -1,5 +1,5 @@
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 const { getCartItems, getCartLength, getItemDictionary } = await import(`${CONFIG.path}${CONFIG.jsPath}common${CONFIG.min}.js`);
 
 
@@ -72,10 +72,18 @@ function toggleEmoneyDisplay(checkoutElems) {
     checkoutElems.cashOnDeliveryElement.style.display = cashOnDeliveryDisplayStyle;
 }
 
+function closeCartOverlay() {
+    const cartOverlay = document.querySelector('#cart-overlay')
+    cartOverlay.classList.add('is-closed')
+}
+
+
 export function checkoutInit(container) {
     // console.log('checkoutInit')
 
+    closeCartOverlay()
     const elems = getCheckoutElems(container)
+
 
     // Add event listener to the radio button
     elems.eMoneyRadioButton.addEventListener('change', () => toggleEmoneyDisplay(elems));

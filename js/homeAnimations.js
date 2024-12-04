@@ -1,12 +1,13 @@
 // console.log('homeAnimations.js')
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 const {
     scaleToZero,
     fadeIn,
     navBarFadeIn,
     typeTextIndividual,
     colorChange,
-    addShuffleEffect
+    addShuffleEffect,
+    updateH1AfterShuffle
 } = await import(`${CONFIG.path}${CONFIG.jsPath}animations${CONFIG.min}.js`);
 
 
@@ -59,14 +60,21 @@ export const homeAnimationsInit = (container, calledFrom) => {
             // color: '#d87d4a', 
             opacity: 0
         });
-        gsap.set([homeElem.title, homeElem.titleChars, homeElem.heroParagraph], {
+        // gsap.set([homeElem.title, homeElem.titleChars, homeElem.heroParagraph], {
+        //     opacity: 0
+        // });
+        gsap.set([homeElem.titleChars], {
+            color: 'transparent'
+        });
+        gsap.set([homeElem.heroParagraph], {
             opacity: 0
         });
 
         resolve();
     });
-
 }
+
+
 
 export function homeIntroAnimation(container) {
     // console.log('homeIntroAnimation')
@@ -86,6 +94,7 @@ export function homeIntroAnimation(container) {
             let typingAnimation = typeTextIndividual(container, 'new product');
             typingAnimation.play()
         }, 4.5)
+        .add(() => updateH1AfterShuffle(homeElem.titleChars), 5)
 }
 
 const heroMaskFadeOut = (elem) => {

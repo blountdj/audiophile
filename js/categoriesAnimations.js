@@ -1,5 +1,5 @@
 // console.log('categoriesAnimations.js')
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v5/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v6/min/js/config-min.js";
 const {
     navBarFadeIn,
     animateSpin,
@@ -55,7 +55,11 @@ export function initCategoriesAnimations(container) {
         scaleY: 1,
     });
 
-    gsap.set([elem.catParagraph, elem.catH2, elem.catH2Chars, elem.catBtnText], {
+    gsap.set(elem.catH2Chars, {
+        color: 'transparent'
+    });
+
+    gsap.set([elem.catParagraph, elem.catBtnText], {
         opacity: 0,
     });
 }
@@ -84,10 +88,11 @@ export const categoryAnimation = async (container, introSelector) => {
         .add(() => heroIntroLoad(container, introSelector), 0.5)
         .add(() => animateSpin(catElem.catTitle, catElem.catTitleChars), 0.8) // Starts 0.75s after the previous animation
         .add(() => catHeroMoveTest(catElem), 1.5) // Starts 0.75s after the previous animation
-        .add(() => addShuffleEffect(catElem.catH2, catElem.catH2Chars), 1.7) // Starts 0.5s after the previous animation
+        .add(() => addShuffleEffect(catElem.catH2, catElem.catH2Chars, 'black'), 1.7) // Starts 0.5s after the previous animation
         .add(() => fadeIn(catElem.catParagraph), 2.3) // Starts 0.75s after the previous animation
         .add(() => scaleToZero(catElem.catBtnElemTop, 'top'), 2.4) // Starts 1s after the previous animation
         .add(() => scaleToZero(catElem.catBtnElemBottom, 'bottom'), 2.4) // Starts 1s after the previous animation
         .add(() => fadeIn(catElem.catBtnText), 2.6) // Starts 0.75s after the previous animation
         .add(() => moveToZeroYPercent(catElem.catNewProduct), 3) // Starts 0.75s after the previous animation         
+    // .add(() => updateH1AfterShuffle(elems.productH2Chars, 'black'), 4)
 }
