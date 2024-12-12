@@ -41,6 +41,10 @@ div.btn-wrapper {
     transform: translateY(-34px);
   }
 
+  div.btn-wrapper:hover .btn-1 {
+    transform: translateY(0px);
+  }
+
 .static-cha {
     position: relative;
     display: inline-block;

@@ -1,1 +1,1 @@
-export const CONFIG = { barbaDebug: !1, pathCss: "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v7/", path: "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v7/", jsPath: "min/js/", min: "-min", cssPath: "min/css/" };
+export const CONFIG = { barbaDebug: !1, pathCss: "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v8/", path: "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v8/", jsPath: "min/js/", min: "-min", cssPath: "min/css/" };

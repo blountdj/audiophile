@@ -1,5 +1,5 @@
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v7/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v8/min/js/config-min.js";
 
 const { showCartCountIcon, addCartItemsCount } = await import(`${CONFIG.path}${CONFIG.jsPath}cart-quantity-icon${CONFIG.min}.js`);
 const { enableCheckoutBtn, getCartItems, applyAnimationClass } = await import(`${CONFIG.path}${CONFIG.jsPath}common${CONFIG.min}.js`);
