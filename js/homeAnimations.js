@@ -1,5 +1,5 @@
 // console.log('homeAnimations.js')
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v12/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v13/min/js/config-min.js";
 const {
     scaleToZero,
     fadeIn,
@@ -31,7 +31,7 @@ export const getHomeElement = (container) => {
         typedTextElem: container.querySelector('.typed-text'),
         btnElemTop: container.querySelector('.btn-elem-top'),
         btnElemBottom: container.querySelector('.btn-elem-bottom'),
-        btnText: container.querySelector('.btn-1-text'),
+        btnText: container.querySelector('.btn-primary-text'),
         heroParagraph: container.querySelector('.hero-text-paragraph'),
 
         title: container.querySelector('.home-hero-h1'),

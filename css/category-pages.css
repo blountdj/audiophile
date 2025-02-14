@@ -1,9 +1,11 @@
 .your-collection-item-class:nth-child(even) {
-    background-color: #ffffff; /* Example style */
-    color: #666; /* Example style */
-  }
+  background-color: #ffffff;
+  /* Example style */
+  color: #666;
+  /* Example style */
+}
 
-.category-item-h2 > .word > .char {
+.category-item-h2>.word>.char {
   transition: 400ms cubic-bezier(0.075, 0.82, 0.165, 1);
   transform-origin: bottom;
 }
@@ -12,7 +14,6 @@ div.btn-wrapper {
   transition: transform 0.3s ease-in-out;
 }
 
-div.btn-wrapper:hover .btn-1-text {
+div.btn-wrapper:hover .btn-primary-text {
   transform: translateY(-34px);
 }
-

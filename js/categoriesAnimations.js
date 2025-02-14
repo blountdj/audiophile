@@ -1,5 +1,5 @@
 // console.log('categoriesAnimations.js')
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v12/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v13/min/js/config-min.js";
 const {
     navBarFadeIn,
     animateSpin,
@@ -28,8 +28,8 @@ const getCategoryElement = (container) => {
         catBtnElemTop: container.querySelector('.btn-elem-top'),
         catBtnElemBottom: container.querySelector('.btn-elem-bottom'),
 
-        catBtn: container.querySelector('.btn-1'),
-        catBtnText: container.querySelector('.btn-1-text'),
+        catBtn: container.querySelector('.btn-primary'),
+        catBtnText: container.querySelector('.btn-primary-text'),
     }
 }
 

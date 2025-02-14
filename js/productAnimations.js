@@ -1,5 +1,5 @@
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v12/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v13/min/js/config-min.js";
 
 const {
     navBarFadeIn,
@@ -29,7 +29,7 @@ const getHeroElement = (container) => {
         btnElemTop: container.querySelector('.btn-elem-top'),
         btnElemBottom: container.querySelector('.btn-elem-bottom'),
 
-        prodBtnText: container.querySelector('.btn-1-text'),
+        prodBtnText: container.querySelector('.btn-primary-text'),
     }
 }
 
@@ -53,7 +53,7 @@ export function initProductAnimations(container) {
     });
 
     gsap.set([heroElement.productPrice], { yPercent: -285, rotate: -15 }); // 285
-    gsap.set([heroElement.productPriceChars], { yPercent: -100 });
+    gsap.set([heroElement.productPriceChars], { yPercent: -100, opacity: 0 });
 
     gsap.set([heroElement.productImgWrapper], { opacity: 0, xPercent: -100 });
     gsap.set([heroElement.productImgTextWrapper], { opacity: 0, xPercent: 100 });
@@ -82,6 +82,7 @@ export const productsHeroEnter = async (container) => {
         .add(() => addShuffleEffect(elems.productH2, elems.productH2Chars, 'black'), 0.75)
         .add(() => fadeIn(elems.productTextParagraph), 1)
         .add(() => animateSpin(elems.productPrice, elems.productPriceChars), 1.1)
+        .add(() => fadeIn(elems.productPriceChars), 1.1)
         .add(() => scaleToZero(elems.btnElemTop, 'top'), 1.7)
         .add(() => scaleToZero(elems.btnElemBottom, 'bottom'), 1.7)
         .add(() => fadeIn(elems.prodBtnText), 1.7)
