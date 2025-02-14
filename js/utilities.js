@@ -80,7 +80,7 @@ export const exampleImagesUrls = [
   "https://assets.lummi.ai/assets/QmQTpXmZP7n5QBAppvijbbm4LL69nR3rRKQTkjXNa4UPYZ?auto=format&w=1500",
   "https://assets.lummi.ai/assets/QmSJJ1RaYRdQiLc4ookd9mZFBvA89s7sBoJgKFrtZUYZfZ?auto=format&w=1500",
   "https://assets.lummi.ai/assets/QmNLp8R9b71HLTLBJkGssbJWCqo4LWZ3vkqpLsjZgxW7R7?auto=format&w=1500",
-  "https://assets.lummi.ai/assets/QmTv10Cv5ZTrFGGtBYByfMME9feFqAbHo2ZQH5BdETGPq9A?auto=format&w=1500",
+  "https://assets.lummi.ai/assets/QmTv11Cv5ZTrFGGtBYByfMME9feFqAbHo2ZQH5BdETGPq9A?auto=format&w=1500",
   "https://assets.lummi.ai/assets/QmNaeHZVH4xCEKVW39YN2Uzgs437iYSWiN9Bjf5hEQwgd2?auto=format&w=1500",
   "https://assets.lummi.ai/assets/QmT6DGxzW2WvPe6ecuKX5WDtwttXocJ8e1dxv5qndT6ak7?auto=format&w=1500"
 ];
