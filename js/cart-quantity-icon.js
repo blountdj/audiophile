@@ -1,7 +1,7 @@
 
 // console.log('cart-quantity-icon.js loaded')
 
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v8/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v9/min/js/config-min.js";
 const { getCartItems, getCartItemsQty } = await import(`${CONFIG.path}${CONFIG.jsPath}common${CONFIG.min}.js`);
 
 export function showCartCountIcon() {
