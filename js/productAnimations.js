@@ -52,7 +52,7 @@ export function initProductAnimations(container) {
         color: 'transparent'
     });
 
-    gsap.set([heroElement.productPrice], { yPercent: -285, rotate: -15 }); // 285
+    gsap.set([heroElement.productPrice], { yPercent: -285, rotate: -15, opacity: 0 }); // 285
     gsap.set([heroElement.productPriceChars], { yPercent: -100, opacity: 0 });
 
     gsap.set([heroElement.productImgWrapper], { opacity: 0, xPercent: -100 });
@@ -82,6 +82,7 @@ export const productsHeroEnter = async (container) => {
         .add(() => addShuffleEffect(elems.productH2, elems.productH2Chars, 'black'), 0.75)
         .add(() => fadeIn(elems.productTextParagraph), 1)
         .add(() => animateSpin(elems.productPrice, elems.productPriceChars), 1.1)
+        .add(() => fadeIn(elems.productPrice), 1.1)
         .add(() => fadeIn(elems.productPriceChars), 1.1)
         .add(() => scaleToZero(elems.btnElemTop, 'top'), 1.7)
         .add(() => scaleToZero(elems.btnElemBottom, 'bottom'), 1.7)
