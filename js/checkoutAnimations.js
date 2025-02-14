@@ -1,5 +1,5 @@
 // console.log('checkoutAnimations.js')
-import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v9/min/js/config-min.js";
+import { CONFIG } from "https://cdn.jsdelivr.net/gh/blountdj/audiophile@v10/min/js/config-min.js";
 const {
     xPercentZero,
     yPercentZero,
